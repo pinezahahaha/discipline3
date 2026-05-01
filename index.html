@@ -943,12 +943,9 @@ function getLevelPct(xp){const lv=getLevelFromXP(xp);if(lv>=MAX_LEVEL)return 100
 // ══════════════════════════════════════════
 let currentUser=null; // {username, dataKey}
 
-function getUsers(){try{return JSON.parse(localStorage.getItem('__users__')||'[]')}catch{return[]}}
-function saveUsers(u){localStorage.setItem('__users__',JSON.stringify(u))}
-function getSession(){try{return JSON.parse(localStorage.getItem('__session__')||'null')}catch{return null}}
-function saveSession(s){localStorage.setItem('__session__',JSON.stringify(s))}
-function clearSession(){localStorage.removeItem('__session__')}
 
+
+function clearSession(
 function switchAuthTab(tab){
   document.getElementById('loginForm').style.display=tab==='login'?'flex':'none';
   document.getElementById('registerForm').style.display=tab==='register'?'flex':'none';
@@ -1019,7 +1016,6 @@ function simpleHash(str){
   return h.toString(36);
 }
 
-function checkExistingSession(){
   const sess=getSession();
   if(!sess) return false;
   const users=getUsers();
@@ -1033,7 +1029,6 @@ function checkExistingSession(){
   return true;
 }
 
-function renderSavedUsers(){
   const users=getUsers();
   if(users.length===0) return;
   const sec=document.getElementById('savedUsersSection');
@@ -1059,12 +1054,13 @@ function renderSavedUsers(){
 // ══════════════════════════════════════════
 // STORAGE (per-user)
 // ══════════════════════════════════════════
-function uKey(k){return (currentUser?currentUser.dataKey:'user_guest')+'_'+k}
-const S={
-  get:k=>{try{return JSON.parse(localStorage.getItem(uKey(k))||'null')}catch{return null}},
-  set:(k,v)=>localStorage.setItem(uKey(k),JSON.stringify(v)),
-  keys:()=>{const prefix=uKey('');const res=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(prefix))res.push(k.slice(prefix.length))}return res}
+
+const S = {
+  get: (k) => window.SyncStorage.get(k),
+  set: (k, v) => window.SyncStorage.set(k, v),
+  keys: () => window.SyncStorage.keys()
 };
+
 function getBlocks(){return S.get('custom_blocks')||DEFAULT_BLOCKS}
 function saveBlocks(b){S.set('custom_blocks',b)}
 function getChecks(d){return S.get('checks_'+d)||{}}
@@ -1947,7 +1943,7 @@ function init(){
 }
 
 // ── BOOT ──
-renderSavedUsers();
+
 if(checkExistingSession()){
   document.getElementById('authScreen').classList.add('hidden');
   init();
