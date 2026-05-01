@@ -1,21 +1,80 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+// ================= FIREBASE =================
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+
+// 🔴 ใส่ config ของคุณตรงนี้
 const firebaseConfig = {
   apiKey: "AIzaSyBAvc6p3LxQlFjo-brEFpQa_kagcphdY44",
   authDomain: "discipline-os-9502b.firebaseapp.com",
   projectId: "discipline-os-9502b",
-  storageBucket: "discipline-os-9502b.firebasestorage.app",
-  messagingSenderId: "561241359867",
-  appId: "1:561241359867:web:843d17cebae639b4b9375e",
-  measurementId: "G-4FVRR5V7R2"
+  appId: "1:561241359867:web:843d17cebae639b4b9375e"
 };
 
-// Initialize Firebase
+// init
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+const auth = getAuth(app);
+
+
+// ================= REGISTER =================
+window.doRegister = function () {
+  const email = document.getElementById("loginUsername").value;
+  const password = document.getElementById("regPassword").value;
+
+  if (password.length < 6) {
+    alert("รหัสต้องมากกว่า 6 ตัว");
+    return;
+  }
+
+  createUserWithEmailAndPassword(auth, email, password)
+    .then(() => {
+      alert("สมัครสำเร็จ");
+    })
+    .catch((error) => {
+      alert(error.message);
+    });
+};
+
+
+// ================= LOGIN =================
+window.doLogin = function () {
+  const email = document.getElementById("loginUsername").value;
+  const password = document.getElementById("loginPassword").value;
+
+  signInWithEmailAndPassword(auth, email, password)
+    .then(() => {
+      alert("ล็อกอินสำเร็จ");
+      location.reload();
+    })
+    .catch((error) => {
+      alert(error.message);
+    });
+};
+
+
+// ================= LOGOUT =================
+window.doLogout = function () {
+  signOut(auth);
+};
+
+
+// ================= CHECK LOGIN =================
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    console.log("Login อยู่:", user.email);
+
+    // 🔥 ซ่อนหน้า login (ถ้ามี id นี้)
+    const authScreen = document.getElementById("authScreen");
+    if (authScreen) authScreen.style.display = "none";
+
+  } else {
+    console.log("ยังไม่ได้ login");
+  }
+});
