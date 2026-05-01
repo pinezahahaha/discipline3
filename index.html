@@ -1,21 +1,6 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta http-equiv="Content-Security-Policy" content="
-  default-src 'self';
-  script-src 'self' 'unsafe-eval' 'unsafe-inline' 
-    https://www.gstatic.com 
-    https://*.googleapis.com 
-    https://*.firebaseio.com;
-  connect-src 'self' 
-    https://*.googleapis.com 
-    https://*.firebaseio.com 
-    https://firestore.googleapis.com
-    wss://*.firebaseio.com;
-  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-  font-src 'self' https://fonts.gstatic.com;
-  img-src 'self' data: blob:;
-">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Discipline OS v3</title>
@@ -41,7 +26,7 @@ body.theme-mono{--bg:#050505;--bg2:#090909;--surface:#0e0e0e;--surface2:#161616;
 
 /* ── AUTH SCREEN ─────────────────────────────── */
 #authScreen{position:fixed;inset:0;z-index:9000;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px}
-#authScreen.hidden{display:none}
+#authScreen.hidden{display:none!important}
 .auth-card{width:100%;max-width:420px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:36px 32px;position:relative;overflow:hidden}
 .auth-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3))}
 .auth-logo{text-align:center;margin-bottom:28px}
@@ -59,15 +44,6 @@ body.theme-mono{--bg:#050505;--bg2:#090909;--surface:#0e0e0e;--surface2:#161616;
 .auth-error{font-size:12px;color:var(--red);background:rgba(255,94,122,.1);border:1px solid rgba(255,94,122,.2);padding:8px 12px;border-radius:6px;display:none}
 .auth-error.show{display:block}
 .auth-hint{font-size:11px;color:var(--text3);text-align:center;margin-top:12px;font-family:'Space Mono',monospace}
-.auth-divider{display:flex;align-items:center;gap:10px;color:var(--text3);font-size:11px;font-family:'Space Mono',monospace}
-.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border)}
-.guest-btn{width:100%;padding:10px;background:transparent;border:1px solid var(--border);color:var(--text2);border-radius:var(--radius-sm);font-size:13px;cursor:pointer;transition:all .2s;font-family:'Sarabun',sans-serif}
-.guest-btn:hover{border-color:var(--border2);color:var(--text)}
-.user-switcher{margin-top:14px;text-align:center}
-.user-list{display:flex;flex-direction:column;gap:6px;margin-top:8px}
-.user-chip{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .15s;font-size:13px;color:var(--text2)}
-.user-chip:hover{border-color:var(--accent2);color:var(--text)}
-.user-chip-avatar{width:28px;height:28px;border-radius:50%;object-fit:cover;background:var(--surface3);flex-shrink:0}
 
 /* ── SIDEBAR ─────────────────────────────────── */
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:90;backdrop-filter:blur(6px);opacity:0;transition:opacity .3s}
@@ -159,7 +135,6 @@ body.theme-mono{--bg:#050505;--bg2:#090909;--surface:#0e0e0e;--surface2:#161616;
 .view.active{display:block;animation:fadeUp .28s ease}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-/* ── IDENTITY HERO ─────────────────────────── */
 .identity-hero{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;margin-bottom:18px;position:relative;overflow:hidden}
 .identity-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3))}
 .identity-hero::after{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(94,255,192,.06),transparent 70%);pointer-events:none}
@@ -180,6 +155,8 @@ body.theme-mono{--bg:#050505;--bg2:#090909;--surface:#0e0e0e;--surface2:#161616;
 .xp-ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .xp-ring-lvl{font-family:'Space Mono',monospace;font-size:18px;font-weight:700;color:var(--gold);line-height:1}
 .xp-ring-txt{font-size:9px;color:var(--text3);font-family:'Space Mono',monospace;letter-spacing:1px}
+.xp-pop{position:fixed;font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:var(--gold);pointer-events:none;z-index:9999;animation:xpPop 1.2s ease forwards;text-shadow:0 2px 10px rgba(255,200,94,.5)}
+@keyframes xpPop{0%{transform:translateY(0) scale(.8);opacity:0}20%{transform:translateY(-10px) scale(1.2);opacity:1}80%{transform:translateY(-50px) scale(1);opacity:.8}100%{transform:translateY(-80px) scale(.9);opacity:0}}
 .progress-bar-wrap{background:var(--surface3);border-radius:10px;height:7px;overflow:hidden;margin-top:4px}
 .progress-bar-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .6s ease}
 .level-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;margin-bottom:18px;position:relative;overflow:hidden}
@@ -194,8 +171,6 @@ body.theme-mono{--bg:#050505;--bg2:#090909;--surface:#0e0e0e;--surface2:#161616;
 .level-bar-wrap{background:var(--surface3);border-radius:10px;height:8px;overflow:hidden}
 .level-bar-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--gold),#ff9f5e);transition:width 1s cubic-bezier(.4,0,.2,1)}
 .level-next{font-size:10px;color:var(--text3);font-family:'Space Mono',monospace;margin-top:5px}
-.xp-pop{position:fixed;font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:var(--gold);pointer-events:none;z-index:9999;animation:xpPop 1.2s ease forwards;text-shadow:0 2px 10px rgba(255,200,94,.5)}
-@keyframes xpPop{0%{transform:translateY(0) scale(.8);opacity:0}20%{transform:translateY(-10px) scale(1.2);opacity:1}80%{transform:translateY(-50px) scale(1);opacity:.8}100%{transform:translateY(-80px) scale(.9);opacity:0}}
 .weekly-trend{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:18px}
 .section-title{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);font-family:'Space Mono',monospace;margin-bottom:14px}
 .week-bars{display:flex;gap:8px;align-items:flex-end;height:80px}
@@ -262,7 +237,6 @@ body.theme-mono{--bg:#050505;--bg2:#090909;--surface:#0e0e0e;--surface2:#161616;
 .quest-edit-btn,.quest-del-btn{font-size:11px;font-family:'Space Mono',monospace;color:var(--text3);background:var(--surface2);border:1px solid var(--border);padding:4px 10px;border-radius:6px;cursor:pointer;transition:all .15s}
 .quest-edit-btn:hover{color:var(--accent2);border-color:var(--accent2)}
 .quest-del-btn:hover{color:var(--red);border-color:var(--red)}
-/* plan ahead section */
 .plan-ahead-card{background:linear-gradient(135deg,rgba(255,108,180,.05),rgba(124,108,255,.05));border:1px solid rgba(255,108,180,.18);border-radius:var(--radius);padding:16px 18px;margin-top:18px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .2s}
 .plan-ahead-card:hover{border-color:rgba(255,108,180,.35)}
 .plan-icon{font-size:24px}
@@ -346,14 +320,13 @@ body.theme-mono{--bg:#050505;--bg2:#090909;--surface:#0e0e0e;--surface2:#161616;
 .avatar-upload-area:hover{border-color:var(--accent2);background:var(--accent2-dim)}
 .avatar-preview-lg{width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--accent);background:var(--surface3)}
 .avatar-hint{font-size:12px;color:var(--text3);font-family:'Space Mono',monospace}
-/* ICON PICKER */
 .icon-picker-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-top:8px;max-height:160px;overflow-y:auto}
 .icon-option{font-size:22px;padding:6px;border-radius:8px;cursor:pointer;text-align:center;border:2px solid transparent;transition:all .15s;background:var(--surface2)}
 .icon-option:hover{transform:scale(1.2);background:var(--surface3)}
 .icon-option.selected{border-color:var(--accent3);background:var(--accent3-dim)}
 .quest-date-display{font-family:'Space Mono',monospace;font-size:12px;color:var(--accent3);background:var(--accent3-dim);padding:6px 14px;border-radius:8px;border:1px solid rgba(255,108,180,.25);margin-bottom:4px}
 
-/* ── STATS / BADGES / CALENDAR / JOURNAL (compact) ── */
+/* ── STATS ── */
 .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;transition:all .2s}
 .stat-card:hover{border-color:var(--border2);transform:translateY(-2px)}
@@ -430,8 +403,6 @@ body.theme-mono{--bg:#050505;--bg2:#090909;--surface:#0e0e0e;--surface2:#161616;
 .journal-save-btn:hover{opacity:.85;transform:translateY(-1px)}
 .saved-badge{display:inline-flex;align-items:center;gap:4px;color:var(--accent);font-size:11px;margin-left:10px;opacity:0;transition:opacity .3s;font-family:'Space Mono',monospace}
 .saved-badge.show{opacity:1}
-
-/* ── FAB / BOTTOM NAV ─── */
 .fab-cal{position:fixed;bottom:26px;right:26px;width:50px;height:50px;background:var(--accent2);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 4px 24px rgba(124,108,255,.45);z-index:80;transition:all .2s}
 .fab-cal:hover{transform:scale(1.12) rotate(8deg)}
 .mobile-bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(13,13,24,.97);border-top:1px solid var(--border);backdrop-filter:blur(16px);z-index:85;padding:8px 0 max(8px,env(safe-area-inset-bottom))}
@@ -460,7 +431,6 @@ body.theme-mono{--bg:#050505;--bg2:#090909;--surface:#0e0e0e;--surface2:#161616;
 .badge-unlock-name{font-size:14px;font-weight:700;color:var(--text)}
 .confetti-piece{position:fixed;width:8px;height:8px;border-radius:2px;pointer-events:none;z-index:9999;animation:confettiFall 1.8s ease forwards}
 @keyframes confettiFall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
-/* Plan view */
 .plan-view-header{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:18px}
 .plan-view-title{font-family:'DM Serif Display',serif;font-size:22px;color:var(--text);margin-bottom:6px}
 .plan-view-sub{font-size:12px;color:var(--text3);font-family:'Space Mono',monospace}
@@ -472,8 +442,13 @@ body.theme-mono{--bg:#050505;--bg2:#090909;--surface:#0e0e0e;--surface2:#161616;
 .plan-day-date{font-family:'Space Mono',monospace;font-size:11px;color:var(--text3);margin-bottom:4px}
 .plan-day-num{font-size:22px;font-weight:700;color:var(--text);margin-bottom:6px}
 .plan-day-quest-count{font-size:11px;color:var(--accent3);font-family:'Space Mono',monospace}
+/* loading */
+#loadingScreen{position:fixed;inset:0;z-index:8000;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px}
+#loadingScreen.hidden{display:none!important}
+.loading-spinner{width:40px;height:40px;border:3px solid var(--surface3);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-family:'Space Mono',monospace;font-size:12px;color:var(--text3);letter-spacing:2px}
 
-/* ── RESPONSIVE ─── */
 @media(max-width:768px){
   .sidebar{transform:translateX(-100%);width:290px}
   .sidebar.open{transform:translateX(0)}
@@ -491,7 +466,6 @@ body.theme-mono{--bg:#050505;--bg2:#090909;--surface:#0e0e0e;--surface2:#161616;
   .mobile-bottom-nav{display:block}
   .block-time{min-width:68px;font-size:9px}
   .all-badges-grid{grid-template-columns:repeat(auto-fill,minmax(110px,1fr))}
-  .auth-card{padding:28px 20px}
 }
 @media(max-width:480px){
   .stats-grid{grid-template-columns:1fr 1fr}
@@ -508,40 +482,36 @@ body.theme-mono{--bg:#050505;--bg2:#090909;--surface:#0e0e0e;--surface2:#161616;
 </head>
 <body>
 
-<!-- ── AUTH SCREEN ── -->
-<div id="authScreen" style="position:fixed;inset:0;z-index:9000;
-     background:var(--bg);display:flex;align-items:center;
-     justify-content:center;padding:20px">
+<!-- LOADING -->
+<div id="loadingScreen">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">กำลังโหลด...</div>
+</div>
 
+<!-- AUTH SCREEN -->
+<div id="authScreen" class="hidden">
   <div class="auth-card">
     <div class="auth-logo">
       <div class="auth-logo-title">⚡ Discipline OS</div>
       <div class="auth-logo-sub">1% Better Every Day</div>
     </div>
-
-    <!-- Tabs -->
     <div class="auth-tabs">
-      <div class="auth-tab active" id="tabLogin"    onclick="switchAuthTab('login')">เข้าสู่ระบบ</div>
-      <div class="auth-tab"        id="tabRegister" onclick="switchAuthTab('register')">สมัครสมาชิก</div>
+      <div class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">เข้าสู่ระบบ</div>
+      <div class="auth-tab" id="tabRegister" onclick="switchAuthTab('register')">สมัครสมาชิก</div>
     </div>
-
-    <!-- Login Form -->
     <div id="loginForm" class="auth-form">
       <div class="auth-error" id="loginError"></div>
-      <input class="auth-input" id="loginEmail"    type="email"    placeholder="Email" autocomplete="email">
+      <input class="auth-input" id="loginEmail" type="email" placeholder="Email" autocomplete="email">
       <input class="auth-input" id="loginPassword" type="password" placeholder="รหัสผ่าน" autocomplete="current-password">
       <button class="auth-btn" onclick="doLogin()">🔑 เข้าสู่ระบบ</button>
     </div>
-
-    <!-- Register Form -->
     <div id="registerForm" class="auth-form" style="display:none">
       <div class="auth-error" id="registerError"></div>
-      <input class="auth-input" id="regEmail"    type="email"    placeholder="Email" autocomplete="email">
+      <input class="auth-input" id="regEmail" type="email" placeholder="Email" autocomplete="email">
       <input class="auth-input" id="regPassword" type="password" placeholder="รหัสผ่าน (อย่างน้อย 6 ตัว)" autocomplete="new-password">
       <button class="auth-btn" onclick="doRegister()">✨ สมัครสมาชิก</button>
     </div>
-
-    <div class="auth-hint">ข้อมูลเก็บบน Firebase · ไม่ส่งให้บุคคลที่สาม</div>
+    <div class="auth-hint">ข้อมูลเก็บบน Firebase · Sync ทุกอุปกรณ์</div>
   </div>
 </div>
 
@@ -687,7 +657,6 @@ body.theme-mono{--bg:#050505;--bg2:#090909;--surface:#0e0e0e;--surface2:#161616;
         </div>
         <div class="insight-refresh">↻</div>
       </div>
-      <!-- Daily Quests mini in routine -->
       <div class="quest-section" id="routineQuestMini"></div>
       <div id="routineList"></div>
       <div class="add-block-wrap"><button class="add-block-btn" onclick="openAddBlockModal()">➕ เพิ่ม Block ใหม่</button></div>
@@ -701,9 +670,9 @@ body.theme-mono{--bg:#050505;--bg2:#090909;--surface:#0e0e0e;--surface2:#161616;
           <div style="font-size:12px;color:var(--text3);font-family:'Space Mono',monospace" id="questViewDateLabel"></div>
         </div>
         <div style="display:flex;gap:8px;align-items:center">
-          <button class="cal-nav-btn" onclick="questNav(-1)" id="questPrevBtn">◀</button>
+          <button class="cal-nav-btn" onclick="questNav(-1)">◀</button>
           <div style="font-family:'Space Mono',monospace;font-size:12px;color:var(--text2);min-width:100px;text-align:center" id="questDateLabel2"></div>
-          <button class="cal-nav-btn" onclick="questNav(1)" id="questNextBtn">▶</button>
+          <button class="cal-nav-btn" onclick="questNav(1)">▶</button>
         </div>
       </div>
       <div id="questList"></div>
@@ -765,15 +734,6 @@ body.theme-mono{--bg:#050505;--bg2:#090909;--surface:#0e0e0e;--surface2:#161616;
       <div class="heatmap-wrap">
         <div class="section-title">📆 ACTIVITY HEATMAP — 90 วันล่าสุด</div>
         <div class="heatmap-grid" id="heatmapGrid"></div>
-        <div style="display:flex;align-items:center;gap:6px;margin-top:10px;font-size:11px;color:var(--text3);font-family:'Space Mono',monospace">
-          น้อย
-          <div style="width:11px;height:11px;border-radius:2px;background:var(--surface3)"></div>
-          <div style="width:11px;height:11px;border-radius:2px;background:rgba(94,255,192,.2)"></div>
-          <div style="width:11px;height:11px;border-radius:2px;background:rgba(94,255,192,.45)"></div>
-          <div style="width:11px;height:11px;border-radius:2px;background:rgba(94,255,192,.72)"></div>
-          <div style="width:11px;height:11px;border-radius:2px;background:rgba(94,255,192,1)"></div>
-          มาก
-        </div>
       </div>
     </div>
 
@@ -836,7 +796,6 @@ body.theme-mono{--bg:#050505;--bg2:#090909;--surface:#0e0e0e;--surface2:#161616;
   </div>
 </nav>
 
-<!-- Level Up -->
 <div class="levelup-overlay" id="levelupOverlay">
   <div class="levelup-card">
     <span class="levelup-icon" id="levelupIcon">⭐</span>
@@ -847,7 +806,6 @@ body.theme-mono{--bg:#050505;--bg2:#090909;--surface:#0e0e0e;--surface2:#161616;
   </div>
 </div>
 
-<!-- Badge Unlock -->
 <div class="badge-unlock-overlay" id="badgeUnlockOverlay">
   <div class="badge-unlock-icon" id="badgeUnlockIcon">🏆</div>
   <div class="badge-unlock-info">
@@ -856,7 +814,7 @@ body.theme-mono{--bg:#050505;--bg2:#090909;--surface:#0e0e0e;--surface2:#161616;
   </div>
 </div>
 
-<!-- Add/Edit Routine Block Modal -->
+<!-- Block Modal -->
 <div class="modal-overlay" id="blockModal">
   <div class="modal-card">
     <div class="modal-title"><span id="blockModalIcon">➕</span> <span id="blockModalTitle">เพิ่ม Block ใหม่</span></div>
@@ -895,7 +853,7 @@ body.theme-mono{--bg:#050505;--bg2:#090909;--surface:#0e0e0e;--surface2:#161616;
       <label class="form-label">ไอคอน Quest</label>
       <div class="icon-picker-grid" id="iconPickerGrid"></div>
     </div>
-    <div class="form-group"><label class="form-label">ชื่อ Quest</label><input class="form-input" id="questTitleInput" placeholder="เช่น วิ่ง 10km, อ่าน 50 หน้า, ไม่กินน้ำตาล..."></div>
+    <div class="form-group"><label class="form-label">ชื่อ Quest</label><input class="form-input" id="questTitleInput" placeholder="เช่น วิ่ง 10km, อ่าน 50 หน้า..."></div>
     <div class="form-group"><label class="form-label">คำอธิบาย (ไม่บังคับ)</label><input class="form-input" id="questDescInput" placeholder="รายละเอียดเพิ่มเติม..."></div>
     <div class="form-group">
       <label class="form-label">Tasks ย่อย (ไม่บังคับ)</label>
@@ -929,6 +887,124 @@ body.theme-mono{--bg:#050505;--bg2:#090909;--surface:#0e0e0e;--surface2:#161616;
 
 <div class="toast" id="toast"></div>
 
+<!-- ══ FIREBASE + APP SCRIPT ══ -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBAvc6p3LxQlFjo-brEFpQa_kagcphdY44",
+  authDomain: "discipline-os-9502b.firebaseapp.com",
+  projectId: "discipline-os-9502b",
+  storageBucket: "discipline-os-9502b.appspot.com",
+  messagingSenderId: "561241359867",
+  appId: "1:561241359867:web:843d17cebae639b4b9375e"
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+let currentUID = null;
+const cache = {};
+
+// ── Firestore helpers ─────────────────────
+async function fsGet(key) {
+  try {
+    const snap = await getDoc(doc(db,"users",currentUID,"data",key));
+    return snap.exists() ? snap.data().value : null;
+  } catch { return null; }
+}
+async function fsSet(key, value) {
+  try { await setDoc(doc(db,"users",currentUID,"data",key),{value}); } catch(e){console.error(e);}
+}
+async function fsKeys() {
+  try {
+    const snap = await getDocs(collection(db,"users",currentUID,"data"));
+    return snap.docs.map(d=>d.id);
+  } catch { return []; }
+}
+async function loadAll() {
+  const keys = await fsKeys();
+  await Promise.all(keys.map(async k => { cache[k] = await fsGet(k); }));
+}
+
+// ── Sync Storage (cache + write-through) ──
+window.S = {
+  get: k => (cache[k] !== undefined ? cache[k] : null),
+  set: (k,v) => { cache[k]=v; fsSet(k,v); },
+  keys: () => Object.keys(cache)
+};
+
+// ── Auth State ────────────────────────────
+onAuthStateChanged(auth, async user => {
+  const loading = document.getElementById("loadingScreen");
+  const authScreen = document.getElementById("authScreen");
+  if (user) {
+    currentUID = user.uid;
+    authScreen.classList.add("hidden");
+    await loadAll();
+    loading.classList.add("hidden");
+    if (typeof window.init === "function") window.init();
+  } else {
+    currentUID = null;
+    Object.keys(cache).forEach(k => delete cache[k]);
+    loading.classList.add("hidden");
+    authScreen.classList.remove("hidden");
+  }
+});
+
+// ── Auth Functions ────────────────────────
+window.doRegister = async function() {
+  const email    = document.getElementById("regEmail").value.trim();
+  const password = document.getElementById("regPassword").value;
+  const errEl    = document.getElementById("registerError");
+  errEl.classList.remove("show");
+  if (!email.includes("@")) { errEl.textContent="กรุณาใส่ email ที่ถูกต้อง"; errEl.classList.add("show"); return; }
+  if (password.length < 6)  { errEl.textContent="รหัสผ่านต้องอย่างน้อย 6 ตัว"; errEl.classList.add("show"); return; }
+  try {
+    await createUserWithEmailAndPassword(auth, email, password);
+  } catch(e) {
+    const M = {"auth/email-already-in-use":"Email นี้ถูกใช้แล้ว","auth/invalid-email":"Email ไม่ถูกต้อง","auth/weak-password":"รหัสผ่านอ่อนเกินไป"};
+    errEl.textContent = M[e.code]||e.message; errEl.classList.add("show");
+  }
+};
+
+window.doLogin = async function() {
+  const email    = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value;
+  const errEl    = document.getElementById("loginError");
+  errEl.classList.remove("show");
+  if (!email||!password) { errEl.textContent="กรุณาใส่ email และรหัสผ่าน"; errEl.classList.add("show"); return; }
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch(e) {
+    const M = {"auth/user-not-found":"ไม่พบบัญชีนี้","auth/wrong-password":"รหัสผ่านไม่ถูกต้อง","auth/invalid-credential":"Email หรือรหัสผ่านไม่ถูกต้อง","auth/invalid-email":"Email ไม่ถูกต้อง"};
+    errEl.textContent = M[e.code]||e.message; errEl.classList.add("show");
+  }
+};
+
+window.doLogout = async function() {
+  if (!confirm("ออกจากระบบ?")) return;
+  await signOut(auth);
+};
+
+// ── Tab switcher ──────────────────────────
+window.switchAuthTab = function(tab) {
+  document.getElementById("loginForm").style.display    = tab==="login"    ? "flex" : "none";
+  document.getElementById("registerForm").style.display = tab==="register" ? "flex" : "none";
+  document.getElementById("tabLogin").classList.toggle("active",    tab==="login");
+  document.getElementById("tabRegister").classList.toggle("active", tab==="register");
+  ["loginError","registerError"].forEach(id=>{document.getElementById(id).classList.remove("show");});
+};
+
+// enter key
+document.getElementById("loginPassword").addEventListener("keydown", e=>{ if(e.key==="Enter") window.doLogin(); });
+document.getElementById("loginEmail").addEventListener("keydown",    e=>{ if(e.key==="Enter") document.getElementById("loginPassword").focus(); });
+document.getElementById("regPassword").addEventListener("keydown",   e=>{ if(e.key==="Enter") window.doRegister(); });
+</script>
+
 <script>
 // ══════════════════════════════════════════
 // LEVEL SYSTEM
@@ -954,143 +1030,23 @@ function getXPForNextLevel(lv){return lv>=MAX_LEVEL?getLevelData(MAX_LEVEL).xp+X
 function getLevelPct(xp){const lv=getLevelFromXP(xp);if(lv>=MAX_LEVEL)return 100;const cur=getXPForLevel(lv);const nxt=getXPForNextLevel(lv);return Math.round(((xp-cur)/(nxt-cur))*100)}
 
 // ══════════════════════════════════════════
-// AUTH
+// STORAGE — ใช้ window.S ที่ Firebase module inject ไว้
 // ══════════════════════════════════════════
-let currentUser=null; // {username, dataKey}
-
-
-
-function clearSession(
-function switchAuthTab(tab){
-  document.getElementById('loginForm').style.display=tab==='login'?'flex':'none';
-  document.getElementById('registerForm').style.display=tab==='register'?'flex':'none';
-  document.getElementById('tabLogin').classList.toggle('active',tab==='login');
-  document.getElementById('tabRegister').classList.toggle('active',tab==='register');
-}
-
-function doRegister(){
-  const name=document.getElementById('regName').value.trim();
-  const username=document.getElementById('regUsername').value.trim().toLowerCase();
-  const pw=document.getElementById('regPassword').value;
-  const pw2=document.getElementById('regPassword2').value;
-  const errEl=document.getElementById('registerError');
-  errEl.classList.remove('show');
-  if(!name){errEl.textContent='กรุณาใส่ชื่อ';errEl.classList.add('show');return}
-  if(!username||username.length<2){errEl.textContent='ชื่อผู้ใช้ต้องอย่างน้อย 2 ตัวอักษร';errEl.classList.add('show');return}
-  if(!/^[a-z0-9_]+$/.test(username)){errEl.textContent='ชื่อผู้ใช้ใช้ได้แค่ a-z, 0-9, _';errEl.classList.add('show');return}
-  if(pw.length<4){errEl.textContent='รหัสผ่านต้องอย่างน้อย 4 ตัว';errEl.classList.add('show');return}
-  if(pw!==pw2){errEl.textContent='รหัสผ่านไม่ตรงกัน';errEl.classList.add('show');return}
-  const users=getUsers();
-  if(users.find(u=>u.username===username)){errEl.textContent='ชื่อผู้ใช้นี้ถูกใช้แล้ว';errEl.classList.add('show');return}
-  // simple hash (not secure — client-side only)
-  const pwHash=simpleHash(pw);
-  const dataKey='user_'+username;
-  const newUser={username,pwHash,name,dataKey,createdAt:Date.now()};
-  users.push(newUser);
-  saveUsers(users);
-  // set default profile
-  const profKey=dataKey+'_profile';
-  localStorage.setItem(profKey,JSON.stringify({name,motto:'Stay Disciplined',avatar:''}));
-  loginUser(newUser);
-}
-
-function doLogin(){
-  const username=document.getElementById('loginUsername').value.trim().toLowerCase();
-  const pw=document.getElementById('loginPassword').value;
-  const errEl=document.getElementById('loginError');
-  errEl.classList.remove('show');
-  if(!username||!pw){errEl.textContent='กรุณาใส่ชื่อผู้ใช้และรหัสผ่าน';errEl.classList.add('show');return}
-  const users=getUsers();
-  const user=users.find(u=>u.username===username);
-  if(!user||user.pwHash!==simpleHash(pw)){errEl.textContent='ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';errEl.classList.add('show');return}
-  loginUser(user);
-}
-
-function loginAsGuest(){
-  const guest={username:'guest',name:'Guest User',dataKey:'user_guest',isGuest:true};
-  loginUser(guest);
-}
-
-function loginUser(user){
-  currentUser=user;
-  saveSession({username:user.username,dataKey:user.dataKey,isGuest:user.isGuest||false});
-  document.getElementById('authScreen').classList.add('hidden');
-  init();
-}
-
-function doLogout(){
-  if(!confirm('ออกจากระบบ?')) return;
-  clearSession();
-  currentUser=null;
-  location.reload();
-}
-
-function simpleHash(str){
-  let h=0;
-  for(let i=0;i<str.length;i++){h=((h<<5)-h+str.charCodeAt(i))|0}
-  return h.toString(36);
-}
-
-  const sess=getSession();
-  if(!sess) return false;
-  const users=getUsers();
-  if(sess.isGuest){
-    currentUser={username:'guest',name:'Guest User',dataKey:'user_guest',isGuest:true};
-    return true;
-  }
-  const user=users.find(u=>u.username===sess.username);
-  if(!user) return false;
-  currentUser=user;
-  return true;
-}
-
-  const users=getUsers();
-  if(users.length===0) return;
-  const sec=document.getElementById('savedUsersSection');
-  const list=document.getElementById('savedUsersList');
-  sec.style.display='flex'; list.style.display='flex';
-  list.innerHTML='';
-  users.forEach(u=>{
-    const chip=document.createElement('div'); chip.className='user-chip';
-    const profKey=u.dataKey+'_profile';
-    const prof=JSON.parse(localStorage.getItem(profKey)||'{}');
-    chip.innerHTML=`<img class="user-chip-avatar" src="${prof.avatar||"data:image/svg+xml,%3Csvg viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='28' height='28' fill='%23202035'/%3E%3Ccircle cx='14' cy='10' r='6' fill='%23444466'/%3E%3Cellipse cx='14' cy='26' rx='10' ry='8' fill='%23444466'/%3E%3C/svg%3E"}">
-      <span style="flex:1">${u.name||u.username}</span><span style="font-family:'Space Mono',monospace;font-size:10px;color:var(--text3)">@${u.username}</span>
-      <span style="font-size:12px;color:var(--accent)">→</span>`;
-    chip.onclick=()=>{
-      document.getElementById('loginUsername').value=u.username;
-      document.getElementById('loginPassword').focus();
-      switchAuthTab('login');
-    };
-    list.appendChild(chip);
-  });
-}
-
-// ══════════════════════════════════════════
-// STORAGE (per-user)
-// ══════════════════════════════════════════
-
-const S = {
-  get: (k) => window.SyncStorage.get(k),
-  set: (k, v) => window.SyncStorage.set(k, v),
-  keys: () => window.SyncStorage.keys()
-};
-
-function getBlocks(){return S.get('custom_blocks')||DEFAULT_BLOCKS}
-function saveBlocks(b){S.set('custom_blocks',b)}
-function getChecks(d){return S.get('checks_'+d)||{}}
-function setChecks(d,c){S.set('checks_'+d,c)}
-function getJournal(d){return S.get('journal_'+d)||{goals:'',gratitude:'',learned:'',reflection:''}}
-function setJournal(d,v){S.set('journal_'+d,v)}
-function getMood(d){return S.get('mood_'+d)||''}
-function setMood(d,m){S.set('mood_'+d,m)}
-function getProfile(){return S.get('profile')||{name:currentUser?.name||'ชื่อของคุณ',motto:'Stay Disciplined',avatar:''}}
-function saveProfileData(p){S.set('profile',p)}
-// QUESTS
-function getQuests(d){return S.get('quests_'+d)||[]}
-function setQuests(d,q){S.set('quests_'+d,q)}
-function getQuestChecks(d,qid){return S.get('qchecks_'+d+'_'+qid)||[]}
-function setQuestChecks(d,qid,arr){S.set('qchecks_'+d+'_'+qid,arr)}
+function getS(){return window.S||{get:()=>null,set:()=>{},keys:()=>[]}}
+function getBlocks(){return getS().get('custom_blocks')||DEFAULT_BLOCKS}
+function saveBlocks(b){getS().set('custom_blocks',b)}
+function getChecks(d){return getS().get('checks_'+d)||{}}
+function setChecks(d,c){getS().set('checks_'+d,c)}
+function getJournal(d){return getS().get('journal_'+d)||{goals:'',gratitude:'',learned:'',reflection:''}}
+function setJournal(d,v){getS().set('journal_'+d,v)}
+function getMood(d){return getS().get('mood_'+d)||''}
+function setMood(d,m){getS().set('mood_'+d,m)}
+function getProfile(){return getS().get('profile')||{name:'ชื่อของคุณ',motto:'Stay Disciplined',avatar:''}}
+function saveProfileData(p){getS().set('profile',p)}
+function getQuests(d){return getS().get('quests_'+d)||[]}
+function setQuests(d,q){getS().set('quests_'+d,q)}
+function getQuestChecks(d,qid){return getS().get('qchecks_'+d+'_'+qid)||[]}
+function setQuestChecks(d,qid,arr){getS().set('qchecks_'+d+'_'+qid,arr)}
 
 // ══════════════════════════════════════════
 // DEFAULT BLOCKS
@@ -1107,8 +1063,8 @@ const DEFAULT_BLOCKS=[
    tasks:[{t:'Meditation 10 นาที',xp:8},{t:'เขียน gratitude 3 ข้อ',xp:6},{t:'อ่านหนังสือ 15 นาที',xp:4}]},
 ];
 const DIFF_XP={'🔥':10,'🔥🔥':20,'🔥🔥🔥':30,'🔥🔥🔥🔥':40,'🔥🔥🔥🔥🔥':50};
+const QUEST_XP=50;
 const QUEST_ICONS=['🎯','🏃','📚','🧘','💪','🎨','🛠️','🎵','🌿','🔬','✍️','🎸','🏊','🚴','🥗','💻','📖','🎭','🌅','⚽','🎾','🧗','🎲','🌍','🍳','🧹','💡','🏆','🎤','🌟','🦁','🐉','⚡','🔥','💎','👑','🚀','✨','🌊','🎪'];
-const QUEST_XP=50; // per completed quest
 
 // ══════════════════════════════════════════
 // STATE
@@ -1120,7 +1076,7 @@ let currentQuestDate=dateKey(today);
 let planSelectedDate=dateKey(today);
 let calViewMonth=today.getMonth(),calViewYear=today.getFullYear();
 let miniCalMonth=today.getMonth(),miniCalYear=today.getFullYear();
-let insightIdx=0, prevLevel=1, prevEarnedBadgeIds=new Set(), editingBlockId=null, editingQuestId=null, selectedQuestIcon='🎯';
+let insightIdx=0,prevLevel=1,prevEarnedBadgeIds=new Set(),editingBlockId=null,editingQuestId=null,selectedQuestIcon='🎯';
 
 // ══════════════════════════════════════════
 // UTILS
@@ -1132,7 +1088,6 @@ function formatDateTHFull(d){const DAYS=['อาทิตย์','จันท�
 function blockXP(b){return DIFF_XP[b.difficulty]||b.tasks.reduce((s,t)=>s+t.xp,0)||10}
 function calcDateXP(dateStr){const checks=getChecks(dateStr);let xp=0;getBlocks().forEach(b=>{b.tasks.forEach((t,i)=>{if((checks[b.id]||[])[i])xp+=t.xp})});return xp}
 function calcProgress(dateStr){const checks=getChecks(dateStr);let total=0,done=0;getBlocks().forEach(b=>{total+=b.tasks.length;(checks[b.id]||[]).forEach(v=>{if(v)done++})});return total===0?0:Math.round((done/total)*100)}
-function calcQuestXP(dateStr){const quests=getQuests(dateStr);let xp=0;quests.forEach(q=>{const qc=getQuestChecks(dateStr,q.id);const allDone=q.tasks.length===0||qc.every(Boolean);if(allDone&&qc.length>0||q.tasks.length===0&&getQuestChecks(dateStr,q.id+'_done')[0])xp+=QUEST_XP});return xp}
 function isQuestDone(dateStr,q){
   if(q.tasks.length===0){return !!(getQuestChecks(dateStr,q.id+'_done')[0])}
   const qc=getQuestChecks(dateStr,q.id);
@@ -1140,28 +1095,28 @@ function isQuestDone(dateStr,q){
 }
 function totalQuestsDone(){
   let count=0;
-  S.keys().filter(k=>k.startsWith('quests_')).forEach(k=>{
+  getS().keys().filter(k=>k.startsWith('quests_')).forEach(k=>{
     const d=k.replace('quests_','');const quests=getQuests(d);
-    quests.forEach(q=>{if(isQuestDone(d,q))count++});
+    quests.forEach(q=>{if(isQuestDone(d,q))count++;});
   });
   return count;
 }
-
 function aggregateStats(){
-  const allDateKeys=S.keys().filter(k=>k.startsWith('checks_')).map(k=>k.replace('checks_',''));
+  const allDateKeys=getS().keys().filter(k=>k.startsWith('checks_')).map(k=>k.replace('checks_',''));
   const pcts=allDateKeys.map(k=>calcProgress(k)).filter(p=>p>0);
-  const totalDays=allDateKeys.filter(k=>calcProgress(k)>0).length;
   const avgPct=pcts.length>0?Math.round(pcts.reduce((a,b)=>a+b,0)/pcts.length):0;
   const perfectDays=pcts.filter(p=>p===100).length;
   let totalXP=0;allDateKeys.forEach(k=>{totalXP+=calcDateXP(k)});
-  // add quest XP
-  S.keys().filter(k=>k.startsWith('quests_')).forEach(k=>{totalXP+=calcQuestXP(k.replace('quests_',''))});
-  let totalTasks=0;allDateKeys.forEach(k=>{const c=getChecks(k);Object.values(c).forEach(arr=>{if(Array.isArray(arr))arr.forEach(v=>{if(v)totalTasks++})})});
-  let streak=0;let d=new Date(today);while(true){const k=dateKey(d);if(calcProgress(k)>=50){streak++;d.setDate(d.getDate()-1)}else break;}
-  let journalDays=0;S.keys().filter(k=>k.startsWith('journal_')).forEach(k=>{const j=S.get(k);if(j&&(j.reflection||'').length>10)journalDays++});
+  getS().keys().filter(k=>k.startsWith('quests_')).forEach(k=>{
+    const d=k.replace('quests_','');const qs=getQuests(d);
+    qs.forEach(q=>{if(isQuestDone(d,q))totalXP+=QUEST_XP;});
+  });
+  let streak=0;let d=new Date(today);
+  while(true){const k=dateKey(d);if(calcProgress(k)>=50){streak++;d.setDate(d.getDate()-1)}else break;}
+  let journalDays=0;getS().keys().filter(k=>k.startsWith('journal_')).forEach(k=>{const j=getS().get(k);if(j&&(j.reflection||'').length>10)journalDays++;});
   const level=getLevelFromXP(totalXP);
   const questsDone=totalQuestsDone();
-  return{totalDays,avgPct,perfectDays,totalXP,totalTasks,streak,journalDays,level,pcts,questsDone};
+  return{avgPct,perfectDays,totalXP,streak,journalDays,level,pcts,questsDone};
 }
 
 // ══════════════════════════════════════════
@@ -1198,9 +1153,9 @@ const ALL_BADGE_CATEGORIES=[
     {id:'journal7',icon:'📝',name:'Journaler',desc:'เขียน journal 7 วัน',check:s=>s.journalDays>=7},
   ]},
   {cat:'🛠️ Builder',badges:[
-    {id:'custom_builder',icon:'🛠️',name:'Custom Builder',desc:'เพิ่ม Block ของตัวเอง',check:()=>!!S.get('custom_blocks')},
-    {id:'theme_changer',icon:'🎨',name:'Theme Master',desc:'เปลี่ยน theme แล้ว',check:()=>!!S.get('theme')&&S.get('theme')!=='default'},
-    {id:'profile_set',icon:'🪪',name:'Identity Set',desc:'ตั้งชื่อโปรไฟล์แล้ว',check:()=>{const p=S.get('profile');return p&&p.name&&p.name!=='ชื่อของคุณ'&&p.name!=='Guest User'}},
+    {id:'custom_builder',icon:'🛠️',name:'Custom Builder',desc:'เพิ่ม Block ของตัวเอง',check:()=>!!getS().get('custom_blocks')},
+    {id:'theme_changer',icon:'🎨',name:'Theme Master',desc:'เปลี่ยน theme แล้ว',check:()=>!!getS().get('theme')&&getS().get('theme')!=='default'},
+    {id:'profile_set',icon:'🪪',name:'Identity Set',desc:'ตั้งชื่อโปรไฟล์แล้ว',check:()=>{const p=getS().get('profile');return p&&p.name&&p.name!=='ชื่อของคุณ'}},
   ]},
 ];
 const ALL_BADGES=ALL_BADGE_CATEGORIES.flatMap(c=>c.badges);
@@ -1210,12 +1165,12 @@ const ALL_BADGES=ALL_BADGE_CATEGORIES.flatMap(c=>c.badges);
 // ══════════════════════════════════════════
 function applyTheme(name){
   document.body.className=name==='default'?'':'theme-'+name;
-  S.set('theme',name);
+  getS().set('theme',name);
   document.querySelectorAll('.theme-dot').forEach(d=>d.classList.remove('active'));
   const el=document.getElementById('td-'+name);if(el)el.classList.add('active');
   showToast('🎨 ธีม: '+name);
 }
-function loadTheme(){applyTheme(S.get('theme')||'default')}
+function loadTheme(){applyTheme(getS().get('theme')||'default')}
 
 // ══════════════════════════════════════════
 // PROFILE
@@ -1262,7 +1217,7 @@ function popXP(amount,x,y){
 // ══════════════════════════════════════════
 function updateXPUI(){
   const s=aggregateStats();const lv=s.level;const ld=getLevelData(lv);
-  const pct=getLevelPct(s.totalXP);const cur=getXPForLevel(lv);const nxt=getXPForNextLevel(lv);const xpInLevel=s.totalXP-cur;const xpNeeded=nxt-cur;
+  const pct=getLevelPct(s.totalXP);const nxt=getXPForNextLevel(lv);
   document.getElementById('sidebarLevel').textContent=`${ld.icon} LVL ${lv}`;
   document.getElementById('sidebarXP').textContent=`${s.totalXP.toLocaleString()} XP`;
   document.getElementById('sidebarXPBar').style.width=pct+'%';
@@ -1276,13 +1231,12 @@ function updateXPUI(){
   document.getElementById('levelXpText').textContent=`${s.totalXP.toLocaleString()} / ${nxt.toLocaleString()} XP`;
   document.getElementById('levelBarFill').style.width=pct+'%';
   if(lv>=MAX_LEVEL){document.getElementById('levelNext').textContent='🔱 MAX LEVEL!'}
-  else{const nextLd=getLevelData(lv+1);document.getElementById('levelNext').textContent=`อีก ${(xpNeeded-xpInLevel).toLocaleString()} XP → ${nextLd.icon} ${nextLd.name}`;}
+  else{const nextLd=getLevelData(lv+1);document.getElementById('levelNext').textContent=`อีก ${(nxt-s.totalXP).toLocaleString()} XP → ${nextLd.icon} ${nextLd.name}`;}
   if(prevLevel&&lv>prevLevel)triggerLevelUp(prevLevel,lv);
   prevLevel=lv;
   updateSidebarBadges(s);
   const earned=ALL_BADGES.filter(b=>b.check(s));
   document.getElementById('navBadgeCount').textContent=earned.length;
-  // quest badge count for today
   const todayQ=getQuests(dateKey(today));
   const doneQ=todayQ.filter(q=>isQuestDone(dateKey(today),q)).length;
   document.getElementById('navQuestBadge').textContent=`${doneQ}/${todayQ.length}`;
@@ -1369,8 +1323,8 @@ function renderWeeklyTrend(){
   const bars=document.getElementById('weekBars');bars.innerHTML='';
   let pcts=[];
   for(let i=6;i>=0;i--){const dt=new Date(today);dt.setDate(dt.getDate()-i);pcts.push(calcProgress(dateKey(dt)))}
-  const improving=pcts.slice(4).reduce((a,b)=>a+b,0)>pcts.slice(0,3).reduce((a,b)=>a+b,0);
   const avg7=Math.round(pcts.reduce((a,b)=>a+b,0)/7);
+  const improving=pcts.slice(4).reduce((a,b)=>a+b,0)>pcts.slice(0,3).reduce((a,b)=>a+b,0);
   document.getElementById('trendLabel').innerHTML=`${improving?'📈 กำลังดีขึ้น':'📉 ควรพยายามมากขึ้น'} · เฉลี่ย ${avg7}%`;
   pcts.forEach((p,i)=>{
     const dt=new Date(today);dt.setDate(dt.getDate()-(6-i));
@@ -1385,7 +1339,7 @@ function renderWeeklyTrend(){
 }
 
 // ══════════════════════════════════════════
-// DAILY QUESTS — CORE
+// QUESTS
 // ══════════════════════════════════════════
 function renderQuestMiniInRoutine(){
   const dateStr=currentRoutineDate;
@@ -1393,11 +1347,10 @@ function renderQuestMiniInRoutine(){
   const container=document.getElementById('routineQuestMini');
   if(quests.length===0){container.innerHTML='';return;}
   const doneCount=quests.filter(q=>isQuestDone(dateStr,q)).length;
-  container.innerHTML=`
-    <div class="quest-header-row">
-      <div class="quest-section-title">🎯 DAILY QUESTS <span style="color:var(--text3);margin-left:6px">${doneCount}/${quests.length}</span></div>
-      <button class="quest-add-btn" onclick="openQuestModalForDate('${dateStr}')">+ Quest</button>
-    </div>`;
+  container.innerHTML=`<div class="quest-header-row">
+    <div class="quest-section-title">🎯 DAILY QUESTS <span style="color:var(--text3);margin-left:6px">${doneCount}/${quests.length}</span></div>
+    <button class="quest-add-btn" onclick="openQuestModalForDate('${dateStr}')">+ Quest</button>
+  </div>`;
   quests.forEach(q=>{
     const done=isQuestDone(dateStr,q);
     const card=document.createElement('div');card.className='quest-card'+(done?' completed':'');
@@ -1416,7 +1369,7 @@ function renderQuestMiniInRoutine(){
           </div>
         </div>
         <div class="quest-card-right">
-          ${q.tasks.length===0?`<div style="width:28px;height:28px;border-radius:50%;border:2px solid ${done?'var(--accent3)':'rgba(255,108,180,.3)'};display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:all .2s" onclick="event.stopPropagation();toggleSimpleQuest('${dateStr}','${q.id}')">${done?'✓':''}</div>`:''}
+          ${q.tasks.length===0?`<div style="width:28px;height:28px;border-radius:50%;border:2px solid ${done?'var(--accent3)':'rgba(255,108,180,.3)'};display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:all .2s;background:${done?'var(--accent3)':'transparent'}" onclick="event.stopPropagation();toggleSimpleQuest('${dateStr}','${q.id}')">${done?'✓':''}</div>`:''}
           ${q.tasks.length>0?`<div class="quest-chevron">▾</div>`:''}
         </div>
       </div>
@@ -1445,7 +1398,7 @@ function renderQuestView(){
   const quests=getQuests(dateStr);
   const container=document.getElementById('questList');container.innerHTML='';
   if(quests.length===0){
-    container.innerHTML=`<div class="quest-empty"><div class="quest-empty-icon">🎯</div><div>ยังไม่มี Quest วันนี้</div><div style="font-size:11px;margin-top:6px;font-family:'Space Mono',monospace;color:var(--text3)">สร้าง Quest เฉพาะวันนี้ที่แตกต่างจาก routine ปกติ</div></div>`;
+    container.innerHTML=`<div class="quest-empty"><div class="quest-empty-icon">🎯</div><div>ยังไม่มี Quest วันนี้</div></div>`;
   } else {
     const doneCount=quests.filter(q=>isQuestDone(dateStr,q)).length;
     container.insertAdjacentHTML('beforebegin',`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div style="font-size:12px;color:var(--text3);font-family:'Space Mono',monospace">${doneCount}/${quests.length} COMPLETED · +${doneCount*QUEST_XP} XP</div></div>`);
@@ -1494,19 +1447,16 @@ function toggleQuestCard(qid,scope){
   const card=body.closest('.quest-card');
   if(card)card.classList.toggle('open');
 }
-
 function toggleSimpleQuest(dateStr,qid){
   const quests=getQuests(dateStr);const q=quests.find(x=>x.id===qid);if(!q)return;
   const doneKey=qid+'_done';
   const cur=getQuestChecks(dateStr,doneKey);
   const wasDone=!!cur[0];
   setQuestChecks(dateStr,doneKey,[!wasDone]);
-  if(!wasDone){
-    popXP(QUEST_XP);launchConfetti(15);showToast(`🎯 Quest "${q.title}" สำเร็จ! +${QUEST_XP} XP`);
-  } else showToast('↩ ยกเลิก');
+  if(!wasDone){popXP(QUEST_XP);launchConfetti(15);showToast(`🎯 Quest "${q.title}" สำเร็จ! +${QUEST_XP} XP`);}
+  else showToast('↩ ยกเลิก');
   renderRoutine();renderQuestView();updateXPUI();
 }
-
 function toggleQuestTask(dateStr,qid,idx,evt,scope){
   const quests=getQuests(dateStr);const q=quests.find(x=>x.id===qid);if(!q)return;
   const qc=getQuestChecks(dateStr,qid);
@@ -1522,20 +1472,19 @@ function toggleQuestTask(dateStr,qid,idx,evt,scope){
   } else showToast('↩ ยกเลิก');
   renderRoutine();renderQuestView();updateXPUI();
 }
+function questNav(dir){const d=parseDate(currentQuestDate);d.setDate(d.getDate()+dir);currentQuestDate=dateKey(d);renderQuestView();}
 
 // ══════════════════════════════════════════
 // QUEST MODAL
 // ══════════════════════════════════════════
-const ICON_PICKER_ICONS=QUEST_ICONS;
 function renderIconPicker(){
   const grid=document.getElementById('iconPickerGrid');grid.innerHTML='';
-  ICON_PICKER_ICONS.forEach(ico=>{
+  QUEST_ICONS.forEach(ico=>{
     const el=document.createElement('div');el.className='icon-option'+(ico===selectedQuestIcon?' selected':'');
     el.textContent=ico;el.onclick=()=>{selectedQuestIcon=ico;renderIconPicker();};
     grid.appendChild(el);
   });
 }
-
 function openQuestModal(){openQuestModalForDate(currentQuestDate)}
 function openQuestModalForDate(dateStr){
   editingQuestId=null;selectedQuestIcon='🎯';
@@ -1604,18 +1553,11 @@ function deleteQuest(dateStr,qid){
   setQuests(dateStr,quests);renderQuestView();renderRoutine();showToast('🗑️ ลบ Quest แล้ว');updateXPUI();
 }
 
-// Quest nav
-function questNav(dir){
-  const d=parseDate(currentQuestDate);d.setDate(d.getDate()+dir);
-  currentQuestDate=dateKey(d);renderQuestView();
-}
-
 // ══════════════════════════════════════════
 // PLAN VIEW
 // ══════════════════════════════════════════
 function renderPlanView(){
   const grid=document.getElementById('planDayGrid');grid.innerHTML='';
-  // show next 14 days
   for(let i=0;i<14;i++){
     const dt=new Date(today);dt.setDate(dt.getDate()+i);const k=dateKey(dt);
     const quests=getQuests(k);const isToday=i===0;
@@ -1645,10 +1587,8 @@ function renderPlanDetail(dateStr){
       const div=document.createElement('div');
       div.style.cssText='display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--surface2);border-radius:var(--radius-sm);margin-bottom:7px;border:1px solid '+(done?'rgba(94,255,192,.2)':'rgba(255,108,180,.15)');
       div.innerHTML=`<div style="font-size:22px">${q.icon}</div>
-        <div style="flex:1;min-width:0">
-          <div style="font-size:14px;font-weight:600;color:var(--text)">${q.title}</div>
-          ${q.tasks.length>0?`<div style="font-size:11px;color:var(--text3);font-family:'Space Mono',monospace">${q.tasks.length} tasks</div>`:''}
-        </div>
+        <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600;color:var(--text)">${q.title}</div>
+        ${q.tasks.length>0?`<div style="font-size:11px;color:var(--text3);font-family:'Space Mono',monospace">${q.tasks.length} tasks</div>`:''}</div>
         <div style="font-size:12px;font-family:'Space Mono',monospace;color:${done?'var(--accent)':'var(--accent3)'}">${done?'✓ DONE':'+'+QUEST_XP+' XP'}</div>
         <button class="quest-del-btn" onclick="deleteQuest('${dateStr}','${q.id}');renderPlanView()" style="padding:3px 8px">🗑️</button>`;
       detail.appendChild(div);
@@ -1657,7 +1597,7 @@ function renderPlanDetail(dateStr){
 }
 
 // ══════════════════════════════════════════
-// ROUTINE VIEW
+// ROUTINE
 // ══════════════════════════════════════════
 function renderRoutine(){
   const d=parseDate(currentRoutineDate);const isToday=currentRoutineDate===dateKey(today);
@@ -1802,7 +1742,7 @@ function renderFullCal(){
 function calNav(dir){calViewMonth+=dir;if(calViewMonth>11){calViewMonth=0;calViewYear++}if(calViewMonth<0){calViewMonth=11;calViewYear--}renderFullCal()}
 
 // ══════════════════════════════════════════
-// MINI CALENDAR
+// MINI CAL
 // ══════════════════════════════════════════
 function renderMiniCal(){
   const MONTHS=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
@@ -1844,7 +1784,7 @@ function renderStats(){
     insEl.appendChild(row);
   });
   const failEl=document.getElementById('failureList');failEl.innerHTML='';
-  const allDateKeys=S.keys().filter(k=>k.startsWith('checks_')).map(k=>k.replace('checks_',''));
+  const allDateKeys=getS().keys().filter(k=>k.startsWith('checks_')).map(k=>k.replace('checks_',''));
   if(allDateKeys.length>0){
     const blockRates=getBlocks().map(b=>{
       let done=0,total=0;
@@ -1867,7 +1807,8 @@ function renderStats(){
   }
 }
 function animateCount(id,target){
-  const el=document.getElementById(id);let start=0;const dur=700;const t0=performance.now();
+  const el=document.getElementById(id);if(!el)return;
+  let start=0;const dur=700;const t0=performance.now();
   function update(now){const p=Math.min((now-t0)/dur,1);const e=1-Math.pow(1-p,3);el.textContent=Math.round(start+(target-start)*e);if(p<1)requestAnimationFrame(update)}
   requestAnimationFrame(update);
 }
@@ -1887,7 +1828,9 @@ function renderJournal(){
   updateCharCounts();
 }
 function updateCharCounts(){['Goals','Gratitude','Learned','Reflection'].forEach(f=>{const ta=document.getElementById('journal'+f);const cc=document.getElementById('cc'+f);if(ta&&cc)cc.textContent=ta.value.length+' ตัว'})}
-setTimeout(()=>['journalGoals','journalGratitude','journalLearned','journalReflection'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',updateCharCounts)}),200);
+['journalGoals','journalGratitude','journalLearned','journalReflection'].forEach(id=>{
+  const el=document.getElementById(id);if(el)el.addEventListener('input',updateCharCounts);
+});
 function saveJournal(){
   setJournal(currentJournalDate,{goals:document.getElementById('journalGoals').value,gratitude:document.getElementById('journalGratitude').value,learned:document.getElementById('journalLearned').value,reflection:document.getElementById('journalReflection').value});
   const badge=document.getElementById('journalSavedBadge');badge.classList.add('show');setTimeout(()=>badge.classList.remove('show'),2500);
@@ -1937,50 +1880,18 @@ function launchConfetti(count=20){
     document.body.appendChild(el);setTimeout(()=>el.remove(),2800);
   }
 }
-function triggerLevelUp(oldLv,newLv){
-  const ld=getLevelData(newLv);
-  document.getElementById('levelupIcon').textContent=ld.icon;document.getElementById('levelupTitle').textContent=`LEVEL ${newLv}!`;
-  document.getElementById('levelupSub').textContent='คุณขึ้นระดับใหม่แล้ว!';document.getElementById('levelupName').textContent=ld.name.toUpperCase();
-  document.getElementById('levelupOverlay').classList.add('show');launchConfetti(50);
-}
-function closeLevelUp(){document.getElementById('levelupOverlay').classList.remove('show')}
 
 // ══════════════════════════════════════════
-// INIT
+// INIT — ถูกเรียกโดย Firebase module
 // ══════════════════════════════════════════
-function init(){
+window.init = function() {
   loadTheme();
   document.getElementById('topbarDate').textContent=formatDateTH(today);
   const s=aggregateStats();
   prevLevel=s.level;
   prevEarnedBadgeIds=new Set(ALL_BADGES.filter(b=>b.check(s)).map(b=>b.id));
   updateProfileUI();renderRoutine();renderMiniCal();updateXPUI();
-}
-
-// ── BOOT ──
-
-if(checkExistingSession()){
-  document.getElementById('authScreen').classList.add('hidden');
-  init();
-}
-// Enter key on login
-document.getElementById('loginPassword').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
-document.getElementById('loginUsername').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('loginPassword').focus()});
-document.getElementById('regPassword2').addEventListener('keydown',e=>{if(e.key==='Enter')doRegister()});
+};
 </script>
-  <script>
-      function switchAuthTab(tab) {
-        document.getElementById("loginForm").style.display    = tab === "login"    ? "flex" : "none";
-        document.getElementById("registerForm").style.display = tab === "register" ? "flex" : "none";
-        document.getElementById("tabLogin").classList.toggle("active",    tab === "login");
-        document.getElementById("tabRegister").classList.toggle("active", tab === "register");
-        ["loginError","registerError"].forEach(id => {
-          const el = document.getElementById(id);
-          if (el) el.classList.remove("show");
-        });
-      }
-    </script>
-
-    <script type="module" src="app.js"></script>
 </body>
 </html>
