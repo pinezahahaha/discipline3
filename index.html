@@ -1996,5 +1996,22 @@ document.getElementById('regPassword2').addEventListener('keydown',e=>{if(e.key=
 </script>
 </body>
 </html>
+<!-- ต้องใส่ก่อน app.js เพราะ init() ต้องถูก define ก่อน -->
+<script>
+  // tab switcher (ยังใช้ inline ได้เพราะไม่ใช่ module)
+  function switchAuthTab(tab) {
+    document.getElementById("loginForm").style.display    = tab === "login"    ? "flex" : "none";
+    document.getElementById("registerForm").style.display = tab === "register" ? "flex" : "none";
+    document.getElementById("tabLogin").classList.toggle("active",    tab === "login");
+    document.getElementById("tabRegister").classList.toggle("active", tab === "register");
+    // clear errors
+    ["loginError","registerError"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove("show");
+    });
+  }
+</script>
+
+<!-- app.js ต้อง type="module" เพราะใช้ ES import -->
 <script type="module" src="app.js"></script>
 </body>
