@@ -529,43 +529,6 @@ body.theme-mono{--bg:#050505;--bg2:#090909;--surface:#0e0e0e;--surface2:#161616;
     <div class="auth-hint">ข้อมูลเก็บบน Firebase · ไม่ส่งให้บุคคลที่สาม</div>
   </div>
 </div>
-  <div id="authScreen">
-  <div class="auth-card">
-    <div class="auth-logo">
-      <div class="auth-logo-title">⚡ Discipline OS</div>
-      <div class="auth-logo-sub">1% Better Every Day</div>
-    </div>
-    <div class="auth-tabs">
-      <div class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">เข้าสู่ระบบ</div>
-      <div class="auth-tab" id="tabRegister" onclick="switchAuthTab('register')">สมัครสมาชิก</div>
-    </div>
-    <!-- Login -->
-    <div id="loginForm" class="auth-form">
-      <div class="auth-error" id="loginError"></div>
-      <input class="auth-input" id="loginUsername" placeholder="ชื่อผู้ใช้" autocomplete="username">
-      <input class="auth-input" id="loginPassword" type="password" placeholder="รหัสผ่าน" autocomplete="current-password">
-      <button class="auth-btn" onclick="doLogin()">🔑 เข้าสู่ระบบ</button>
-    </div>
-    <!-- Register -->
-    <div id="registerForm" class="auth-form" style="display:none">
-      <div class="auth-error" id="registerError"></div>
-      <input class="auth-input" id="regName" placeholder="ชื่อของคุณ (แสดงในโปรไฟล์)" maxlength="30">
-      <input class="auth-input" id="regUsername" placeholder="ชื่อผู้ใช้ (สำหรับล็อกอิน)" maxlength="20" autocomplete="username">
-      <input class="auth-input" id="regPassword" type="password" placeholder="รหัสผ่าน (อย่างน้อย 4 ตัว)" autocomplete="new-password">
-      <input class="auth-input" id="regPassword2" type="password" placeholder="ยืนยันรหัสผ่าน" autocomplete="new-password">
-      <button class="auth-btn" onclick="doRegister()">✨ สมัครสมาชิก</button>
-    </div>
-    <div style="margin-top:16px">
-      <div class="auth-divider" id="savedUsersSection" style="display:none">บัญชีที่บันทึกไว้</div>
-      <div class="user-list" id="savedUsersList" style="display:none"></div>
-    </div>
-    <div style="margin-top:14px">
-      <div class="auth-divider">หรือ</div>
-      <button class="guest-btn" style="margin-top:10px" onclick="loginAsGuest()">👤 เข้าแบบไม่สมัคร (Guest)</button>
-    </div>
-    <div class="auth-hint">ข้อมูลเก็บในอุปกรณ์ของคุณ ไม่ได้ส่งออกไปที่ไหน</div>
-  </div>
-</div>
 
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
@@ -1994,24 +1957,19 @@ document.getElementById('loginPassword').addEventListener('keydown',e=>{if(e.key
 document.getElementById('loginUsername').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('loginPassword').focus()});
 document.getElementById('regPassword2').addEventListener('keydown',e=>{if(e.key==='Enter')doRegister()});
 </script>
+  <script>
+      function switchAuthTab(tab) {
+        document.getElementById("loginForm").style.display    = tab === "login"    ? "flex" : "none";
+        document.getElementById("registerForm").style.display = tab === "register" ? "flex" : "none";
+        document.getElementById("tabLogin").classList.toggle("active",    tab === "login");
+        document.getElementById("tabRegister").classList.toggle("active", tab === "register");
+        ["loginError","registerError"].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.classList.remove("show");
+        });
+      }
+    </script>
+
+    <script type="module" src="app.js"></script>
 </body>
 </html>
-<!-- ต้องใส่ก่อน app.js เพราะ init() ต้องถูก define ก่อน -->
-<script>
-  // tab switcher (ยังใช้ inline ได้เพราะไม่ใช่ module)
-  function switchAuthTab(tab) {
-    document.getElementById("loginForm").style.display    = tab === "login"    ? "flex" : "none";
-    document.getElementById("registerForm").style.display = tab === "register" ? "flex" : "none";
-    document.getElementById("tabLogin").classList.toggle("active",    tab === "login");
-    document.getElementById("tabRegister").classList.toggle("active", tab === "register");
-    // clear errors
-    ["loginError","registerError"].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.classList.remove("show");
-    });
-  }
-</script>
-
-<!-- app.js ต้อง type="module" เพราะใช้ ES import -->
-<script type="module" src="app.js"></script>
-</body>
