@@ -321,7 +321,7 @@ body.theme-mono{--bg:#050505;--bg2:#090909;--surface:#0e0e0e;--surface2:#161616;
 .avatar-preview-lg{width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--accent);background:var(--surface3)}
 .avatar-hint{font-size:12px;color:var(--text3);font-family:'Space Mono',monospace}
 .icon-picker-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-top:8px;max-height:160px;overflow-y:auto}
-.icon-option{font-size:22px;padding:6px;border-radius:8px;cursor:pointer;text-align:center;border:2px solid transparent;transition:all .15s;background:var(--surface2)}
+.icon-option{font-size:22px;padding:6px;border-radius:8px;cursor:pointer;text-align:center;border:2px solid transparent;transition:all .15px;background:var(--surface2)}
 .icon-option:hover{transform:scale(1.2);background:var(--surface3)}
 .icon-option.selected{border-color:var(--accent3);background:var(--accent3-dim)}
 .quest-date-display{font-family:'Space Mono',monospace;font-size:12px;color:var(--accent3);background:var(--accent3-dim);padding:6px 14px;border-radius:8px;border:1px solid rgba(255,108,180,.25);margin-bottom:4px}
@@ -874,7 +874,7 @@ body.theme-mono{--bg:#050505;--bg2:#090909;--surface:#0e0e0e;--surface2:#161616;
     <div class="avatar-upload-area" onclick="document.getElementById('avatarFileInput').click()">
       <img class="avatar-preview-lg" id="avatarPreviewLg" src="data:image/svg+xml,%3Csvg viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='80' height='80' fill='%23202035'/%3E%3Ccircle cx='40' cy='30' r='16' fill='%23444466'/%3E%3Cellipse cx='40' cy='70' rx='24' ry='18' fill='%23444466'/%3E%3C/svg%3E">
       <input type="file" id="avatarFileInput" accept="image/*" style="display:none" onchange="handleAvatarUpload(this)">
-      <div class="avatar-hint">📷 แตะเพื่อเปลี่ยนรูปโปรไฟล์</div>
+      <div class="avatar-hint">📷 แตะเพื่อเปลี่ยนรูปโปรไฟล์ (ไม่เกิน 500KB)</div>
     </div>
     <div class="form-group"><label class="form-label">ชื่อของคุณ</label><input class="form-input" id="profileNameInput" placeholder="ใส่ชื่อ..." maxlength="30"></div>
     <div class="form-group"><label class="form-label">คติประจำใจ</label><input class="form-input" id="profileMottoInput" placeholder="Stay Disciplined..." maxlength="50"></div>
@@ -891,7 +891,7 @@ body.theme-mono{--bg:#050505;--bg2:#090909;--surface:#0e0e0e;--surface2:#161616;
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBAvc6p3LxQlFjo-brEFpQa_kagcphdY44",
@@ -914,26 +914,61 @@ async function fsGet(key) {
   try {
     const snap = await getDoc(doc(db,"users",currentUID,"data",key));
     return snap.exists() ? snap.data().value : null;
-  } catch { return null; }
+  } catch(e) { console.warn('fsGet error',key,e); return null; }
 }
 async function fsSet(key, value) {
-  try { await setDoc(doc(db,"users",currentUID,"data",key),{value}); } catch(e){console.error(e);}
+  try { 
+    await setDoc(doc(db,"users",currentUID,"data",key),{value}); 
+  } catch(e){ console.error('fsSet error',key,e); }
 }
 async function fsKeys() {
   try {
     const snap = await getDocs(collection(db,"users",currentUID,"data"));
     return snap.docs.map(d=>d.id);
-  } catch { return []; }
+  } catch(e) { console.warn('fsKeys error',e); return []; }
 }
 async function loadAll() {
-  const keys = await fsKeys();
-  await Promise.all(keys.map(async k => { cache[k] = await fsGet(k); }));
+  try {
+    const keys = await fsKeys();
+    await Promise.all(keys.map(async k => { 
+      const val = await fsGet(k);
+      if (val !== null) cache[k] = val; 
+    }));
+    console.log('loadAll done, keys:', Object.keys(cache).length);
+  } catch(e) { console.error('loadAll error',e); }
+}
+
+// ── FIX: สร้างข้อมูลเริ่มต้นสำหรับ user ใหม่ ──
+async function initUserDataIfNew() {
+  try {
+    // ตรวจว่า user นี้เคยมีข้อมูลใน Firestore ไหม
+    const snap = await getDocs(collection(db,"users",currentUID,"data"));
+    if (snap.empty) {
+      // user ใหม่ → สร้างข้อมูลเริ่มต้น
+      console.log('New user detected, creating default data...');
+      const DEFAULT_BLOCKS_INIT = [
+        {id:'wake',time:'04:30–05:00',title:'ตื่น + ไม่กดเลื่อน',difficulty:'🔥🔥🔥',
+         quote:'การตื่นเช้าคือชัยชนะครั้งแรกของวัน',
+         tasks:[{t:'วางโทรศัพท์ไว้อีกห้อง',xp:8},{t:'ดื่มน้ำ 500ml ทันที',xp:4},{t:'เปิดไฟ/ม่าน ให้แสงเข้า',xp:3}]},
+        {id:'exercise',time:'05:00–06:00',title:'ออกกำลังกาย',difficulty:'🔥🔥🔥🔥',
+         quote:'Exercise = ยาที่ดีที่สุดสำหรับสมอง',
+         tasks:[{t:'วอร์มอัพ 5 นาที',xp:5},{t:'ออกกำลังกาย 40–50 นาที',xp:15},{t:'Cool down + stretch',xp:5}]},
+        {id:'mindset',time:'06:00–06:30',title:'Mindset Morning',difficulty:'🔥🔥',
+         quote:'30 นาทีนี้โปรแกรม subconscious ก่อนโลกมาดึงความสนใจ',
+         tasks:[{t:'Meditation 10 นาที',xp:8},{t:'เขียน gratitude 3 ข้อ',xp:6},{t:'อ่านหนังสือ 15 นาที',xp:4}]},
+      ];
+      // บันทึก default blocks ลง Firestore
+      await setDoc(doc(db,"users",currentUID,"data","custom_blocks"),{value: DEFAULT_BLOCKS_INIT});
+      cache['custom_blocks'] = DEFAULT_BLOCKS_INIT;
+      console.log('Default data created!');
+    }
+  } catch(e) { console.error('initUserDataIfNew error',e); }
 }
 
 // ── Sync Storage (cache + write-through) ──
 window.S = {
   get: k => (cache[k] !== undefined ? cache[k] : null),
-  set: (k,v) => { cache[k]=v; fsSet(k,v); },
+  set: (k, v) => { cache[k] = v; fsSet(k, v); },
   keys: () => Object.keys(cache)
 };
 
@@ -944,7 +979,10 @@ onAuthStateChanged(auth, async user => {
   if (user) {
     currentUID = user.uid;
     authScreen.classList.add("hidden");
+    // โหลดข้อมูลทั้งหมดก่อน แล้วค่อย init
     await loadAll();
+    // ถ้าไม่มีข้อมูลเลย → สร้าง default
+    await initUserDataIfNew();
     loading.classList.add("hidden");
     if (typeof window.init === "function") window.init();
   } else {
@@ -965,6 +1003,7 @@ window.doRegister = async function() {
   if (password.length < 6)  { errEl.textContent="รหัสผ่านต้องอย่างน้อย 6 ตัว"; errEl.classList.add("show"); return; }
   try {
     await createUserWithEmailAndPassword(auth, email, password);
+    // onAuthStateChanged จะจัดการต่อ (รวมถึงการสร้าง default data)
   } catch(e) {
     const M = {"auth/email-already-in-use":"Email นี้ถูกใช้แล้ว","auth/invalid-email":"Email ไม่ถูกต้อง","auth/weak-password":"รหัสผ่านอ่อนเกินไป"};
     errEl.textContent = M[e.code]||e.message; errEl.classList.add("show");
@@ -979,6 +1018,7 @@ window.doLogin = async function() {
   if (!email||!password) { errEl.textContent="กรุณาใส่ email และรหัสผ่าน"; errEl.classList.add("show"); return; }
   try {
     await signInWithEmailAndPassword(auth, email, password);
+    // onAuthStateChanged จะจัดการต่อ
   } catch(e) {
     const M = {"auth/user-not-found":"ไม่พบบัญชีนี้","auth/wrong-password":"รหัสผ่านไม่ถูกต้อง","auth/invalid-credential":"Email หรือรหัสผ่านไม่ถูกต้อง","auth/invalid-email":"Email ไม่ถูกต้อง"};
     errEl.textContent = M[e.code]||e.message; errEl.classList.add("show");
@@ -1030,7 +1070,7 @@ function getXPForNextLevel(lv){return lv>=MAX_LEVEL?getLevelData(MAX_LEVEL).xp+X
 function getLevelPct(xp){const lv=getLevelFromXP(xp);if(lv>=MAX_LEVEL)return 100;const cur=getXPForLevel(lv);const nxt=getXPForNextLevel(lv);return Math.round(((xp-cur)/(nxt-cur))*100)}
 
 // ══════════════════════════════════════════
-// STORAGE — ใช้ window.S ที่ Firebase module inject ไว้
+// STORAGE
 // ══════════════════════════════════════════
 function getS(){return window.S||{get:()=>null,set:()=>{},keys:()=>[]}}
 function getBlocks(){return getS().get('custom_blocks')||DEFAULT_BLOCKS}
@@ -1049,7 +1089,7 @@ function getQuestChecks(d,qid){return getS().get('qchecks_'+d+'_'+qid)||[]}
 function setQuestChecks(d,qid,arr){getS().set('qchecks_'+d+'_'+qid,arr)}
 
 // ══════════════════════════════════════════
-// DEFAULT BLOCKS
+// DEFAULT BLOCKS (fallback ถ้า Firestore โหลดไม่ได้)
 // ══════════════════════════════════════════
 const DEFAULT_BLOCKS=[
   {id:'wake',time:'04:30–05:00',title:'ตื่น + ไม่กดเลื่อน',difficulty:'🔥🔥🔥',
@@ -1173,7 +1213,7 @@ function applyTheme(name){
 function loadTheme(){applyTheme(getS().get('theme')||'default')}
 
 // ══════════════════════════════════════════
-// PROFILE
+// PROFILE — FIX: compress avatar ก่อน save
 // ══════════════════════════════════════════
 function openProfileModal(){
   const p=getProfile();
@@ -1183,12 +1223,32 @@ function openProfileModal(){
   document.getElementById('profileModal').classList.add('show');
 }
 function closeProfileModal(){document.getElementById('profileModal').classList.remove('show')}
+
 function handleAvatarUpload(input){
   const file=input.files[0];if(!file)return;
+  // FIX: compress image ก่อน save เพื่อไม่ให้เกิน Firestore limit
   const reader=new FileReader();
-  reader.onload=e=>{const src=e.target.result;document.getElementById('avatarPreviewLg').src=src;const p=getProfile();p.avatar=src;saveProfileData(p);};
+  reader.onload=e=>{
+    const img=new Image();
+    img.onload=()=>{
+      const canvas=document.createElement('canvas');
+      const MAX=200; // ย่อเป็น 200x200 max
+      let w=img.width,h=img.height;
+      if(w>h){if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}}
+      else{if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}}
+      canvas.width=w;canvas.height=h;
+      const ctx=canvas.getContext('2d');
+      ctx.drawImage(img,0,0,w,h);
+      const compressed=canvas.toDataURL('image/jpeg',0.75);
+      document.getElementById('avatarPreviewLg').src=compressed;
+      document.getElementById('sidebarAvatar').src=compressed;
+      const p=getProfile();p.avatar=compressed;saveProfileData(p);
+    };
+    img.src=e.target.result;
+  };
   reader.readAsDataURL(file);
 }
+
 function saveProfile(){
   const name=document.getElementById('profileNameInput').value.trim()||'ชื่อของคุณ';
   const motto=document.getElementById('profileMottoInput').value.trim();
