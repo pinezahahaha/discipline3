@@ -14,7 +14,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyBAvc6p3LxQlFjo-brEFpQa_kagcphdY44",
   authDomain: "discipline-os-9502b.firebaseapp.com",
   projectId: "discipline-os-9502b",
-  storageBucket: "discipline-os-9502b.firebasestorage.app",
+  storageBucket: "discipline-os-9502b.appspot.com",
   messagingSenderId: "561241359867",
   appId: "1:561241359867:web:843d17cebae639b4b9375e",
   measurementId: "G-4FVRR5V7R2"
