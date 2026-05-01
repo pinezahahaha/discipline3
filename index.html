@@ -1,0 +1,1963 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Discipline OS v3</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#080810;--bg2:#0d0d18;--surface:#10101e;--surface2:#181828;--surface3:#202035;
+  --border:#282840;--border2:#323250;--accent:#5effc0;--accent-dim:rgba(94,255,192,0.12);
+  --accent2:#7c6cff;--accent2-dim:rgba(124,108,255,0.12);--accent3:#ff6cb4;--accent3-dim:rgba(255,108,180,0.12);
+  --gold:#ffc85e;--gold-dim:rgba(255,200,94,0.12);--red:#ff5e7a;
+  --text:#eeeef8;--text2:#8888aa;--text3:#444466;--radius:14px;--radius-sm:9px;--sidebar-w:270px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.4}
+
+body.theme-ocean{--bg:#030d14;--bg2:#041219;--surface:#07181f;--surface2:#0d2230;--surface3:#122838;--border:#1a3344;--border2:#1e3d50;--accent:#00d9ff;--accent-dim:rgba(0,217,255,.12);--accent2:#0066ff;--accent2-dim:rgba(0,102,255,.12);--gold:#ffc85e;--text:#e0f4ff;--text2:#5a8fa8;--text3:#2a4d60}
+body.theme-sakura{--bg:#130a0e;--bg2:#1a0d13;--surface:#201018;--surface2:#2a1422;--surface3:#32182a;--border:#3d1e2e;--border2:#4a2438;--accent:#ff8fab;--accent-dim:rgba(255,143,171,.12);--accent2:#c77dff;--accent2-dim:rgba(199,125,255,.12);--gold:#ffd95a;--text:#ffe0ec;--text2:#9a6a7a;--text3:#4d3040}
+body.theme-forest{--bg:#050e08;--bg2:#08130b;--surface:#0d1a10;--surface2:#132218;--surface3:#182b1e;--border:#1f3526;--border2:#263e2d;--accent:#39e07a;--accent-dim:rgba(57,224,122,.12);--accent2:#a3e635;--accent2-dim:rgba(163,230,53,.12);--gold:#ffd95a;--text:#e0ffe8;--text2:#5a8a68;--text3:#2a4a35}
+body.theme-amber{--bg:#100a00;--bg2:#160e00;--surface:#1e1300;--surface2:#281900;--surface3:#301f00;--border:#3d2800;--border2:#4a3000;--accent:#ffa733;--accent-dim:rgba(255,167,51,.12);--accent2:#ff6b35;--accent2-dim:rgba(255,107,53,.12);--gold:#ffe066;--text:#fff5e0;--text2:#9a7a44;--text3:#4d3c18}
+body.theme-mono{--bg:#050505;--bg2:#090909;--surface:#0e0e0e;--surface2:#161616;--surface3:#1c1c1c;--border:#282828;--border2:#323232;--accent:#ffffff;--accent-dim:rgba(255,255,255,.1);--accent2:#aaaaaa;--accent2-dim:rgba(170,170,170,.1);--gold:#dddddd;--text:#f0f0f0;--text2:#787878;--text3:#3c3c3c}
+
+/* ── AUTH SCREEN ─────────────────────────────── */
+#authScreen{position:fixed;inset:0;z-index:9000;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px}
+#authScreen.hidden{display:none}
+.auth-card{width:100%;max-width:420px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:36px 32px;position:relative;overflow:hidden}
+.auth-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3))}
+.auth-logo{text-align:center;margin-bottom:28px}
+.auth-logo-title{font-family:'Space Mono',monospace;font-size:18px;font-weight:700;letter-spacing:4px;color:var(--accent);text-transform:uppercase}
+.auth-logo-sub{font-size:12px;color:var(--text3);margin-top:4px;font-family:'Space Mono',monospace;letter-spacing:2px}
+.auth-tabs{display:flex;gap:0;background:var(--surface2);border-radius:10px;padding:3px;margin-bottom:24px}
+.auth-tab{flex:1;padding:8px;text-align:center;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text2);transition:all .2s;font-family:'Sarabun',sans-serif}
+.auth-tab.active{background:var(--accent2);color:#fff}
+.auth-form{display:flex;flex-direction:column;gap:14px}
+.auth-input{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'Sarabun',sans-serif;font-size:14px;padding:11px 14px;border-radius:var(--radius-sm);outline:none;transition:border-color .2s}
+.auth-input:focus{border-color:var(--accent2)}
+.auth-input::placeholder{color:var(--text3)}
+.auth-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--accent2),var(--accent3));color:#fff;border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;font-family:'Sarabun',sans-serif;margin-top:4px}
+.auth-btn:hover{opacity:.88;transform:translateY(-1px)}
+.auth-error{font-size:12px;color:var(--red);background:rgba(255,94,122,.1);border:1px solid rgba(255,94,122,.2);padding:8px 12px;border-radius:6px;display:none}
+.auth-error.show{display:block}
+.auth-hint{font-size:11px;color:var(--text3);text-align:center;margin-top:12px;font-family:'Space Mono',monospace}
+.auth-divider{display:flex;align-items:center;gap:10px;color:var(--text3);font-size:11px;font-family:'Space Mono',monospace}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.guest-btn{width:100%;padding:10px;background:transparent;border:1px solid var(--border);color:var(--text2);border-radius:var(--radius-sm);font-size:13px;cursor:pointer;transition:all .2s;font-family:'Sarabun',sans-serif}
+.guest-btn:hover{border-color:var(--border2);color:var(--text)}
+.user-switcher{margin-top:14px;text-align:center}
+.user-list{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.user-chip{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .15s;font-size:13px;color:var(--text2)}
+.user-chip:hover{border-color:var(--accent2);color:var(--text)}
+.user-chip-avatar{width:28px;height:28px;border-radius:50%;object-fit:cover;background:var(--surface3);flex-shrink:0}
+
+/* ── SIDEBAR ─────────────────────────────────── */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:90;backdrop-filter:blur(6px);opacity:0;transition:opacity .3s}
+.sidebar-overlay.show{opacity:1}
+.sidebar{width:var(--sidebar-w);min-height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto;transition:transform .3s cubic-bezier(.4,0,.2,1)}
+.profile-area{padding:18px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(94,255,192,.04),transparent);cursor:pointer;transition:background .15s}
+.profile-area:hover{background:linear-gradient(135deg,rgba(94,255,192,.08),transparent)}
+.profile-row{display:flex;align-items:center;gap:12px}
+.avatar-wrap{position:relative;width:52px;height:52px;flex-shrink:0}
+.avatar-img{width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid var(--accent);background:var(--surface2)}
+.avatar-edit-btn{position:absolute;bottom:-2px;right:-2px;width:20px;height:20px;border-radius:50%;background:var(--accent2);border:2px solid var(--surface);display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer;transition:transform .2s}
+.avatar-edit-btn:hover{transform:scale(1.15)}
+.profile-info{flex:1;min-width:0}
+.profile-name{font-size:15px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.profile-title{font-size:11px;color:var(--accent);font-family:'Space Mono',monospace;margin-top:2px}
+.profile-edit-hint{font-size:10px;color:var(--text3);margin-top:2px}
+.sidebar-xp{padding:12px 18px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(255,200,94,.05),transparent)}
+.xp-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.xp-level{font-family:'Space Mono',monospace;font-size:11px;font-weight:700;color:var(--gold);letter-spacing:2px;text-transform:uppercase}
+.xp-pts{font-family:'Space Mono',monospace;font-size:11px;color:var(--text3)}
+.xp-bar-wrap{background:var(--surface3);border-radius:10px;height:6px;overflow:hidden}
+.xp-bar-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--gold),#ff9f5e);transition:width .8s cubic-bezier(.4,0,.2,1)}
+.identity-tag{margin-top:8px;font-size:12px;color:var(--text2);display:flex;align-items:center;gap:6px}
+.identity-pct{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:var(--accent)}
+.nav-section{padding:12px 10px 6px}
+.nav-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);padding:0 8px;margin-bottom:6px;font-family:'Space Mono',monospace}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);cursor:pointer;color:var(--text2);font-size:14px;transition:all .15s;border:1px solid transparent;user-select:none}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:var(--surface2);color:var(--accent);border-color:var(--border)}
+.nav-icon{font-size:15px;width:20px;text-align:center}
+.nav-xp-badge{margin-left:auto;font-size:10px;font-family:'Space Mono',monospace;color:var(--gold);background:var(--gold-dim);padding:2px 7px;border-radius:10px;border:1px solid rgba(255,200,94,.2)}
+.nav-quest-badge{margin-left:auto;font-size:10px;font-family:'Space Mono',monospace;color:var(--accent3);background:var(--accent3-dim);padding:2px 7px;border-radius:10px;border:1px solid rgba(255,108,180,.2)}
+.theme-section{padding:14px 18px;border-top:1px solid var(--border)}
+.theme-title{font-size:10px;letter-spacing:2px;color:var(--text3);font-family:'Space Mono',monospace;margin-bottom:10px;text-transform:uppercase}
+.theme-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.theme-dot{width:100%;aspect-ratio:1;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:all .2s;position:relative;display:flex;align-items:center;justify-content:center;font-size:12px}
+.theme-dot:hover{transform:scale(1.15)}
+.theme-dot.active::after{content:'✓';position:absolute;font-size:11px;font-weight:900;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.td-default{background:linear-gradient(135deg,#5effc0,#7c6cff)}
+.td-ocean{background:linear-gradient(135deg,#00d9ff,#0066ff)}
+.td-sakura{background:linear-gradient(135deg,#ff8fab,#c77dff)}
+.td-forest{background:linear-gradient(135deg,#39e07a,#a3e635)}
+.td-amber{background:linear-gradient(135deg,#ffa733,#ff6b35)}
+.td-mono{background:linear-gradient(135deg,#aaa,#444)}
+.sidebar-badges{padding:12px 18px;border-top:1px solid var(--border)}
+.badges-title{font-size:10px;letter-spacing:2px;color:var(--text3);font-family:'Space Mono',monospace;margin-bottom:10px;text-transform:uppercase}
+.badge-grid{display:flex;flex-wrap:wrap;gap:6px}
+.badge-chip{font-size:18px;width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--surface2);border:1px solid var(--border);cursor:default;transition:transform .2s;position:relative}
+.badge-chip:hover{transform:scale(1.15)}
+.badge-chip.locked{filter:grayscale(1);opacity:.35}
+.badge-chip[title]:hover::after{content:attr(title);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--border);color:var(--text);font-size:11px;font-family:'Space Mono',monospace;padding:4px 10px;border-radius:6px;white-space:nowrap;z-index:200;pointer-events:none}
+.sidebar-calendar{padding:12px 12px;border-top:1px solid var(--border)}
+.mini-cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.mini-cal-title{font-size:12px;font-weight:600;color:var(--text);font-family:'Space Mono',monospace}
+.mini-cal-nav{background:none;border:none;color:var(--text2);cursor:pointer;font-size:16px;padding:2px 6px;border-radius:4px;transition:all .15s}
+.mini-cal-nav:hover{background:var(--surface2)}
+.mini-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center}
+.mini-cal-day-label{font-size:10px;color:var(--text3);padding:3px 0;font-family:'Space Mono',monospace}
+.mini-cal-day{font-size:11px;padding:5px 1px;border-radius:5px;cursor:pointer;color:var(--text2);transition:all .1s;position:relative}
+.mini-cal-day:hover{background:var(--surface2);color:var(--text)}
+.mini-cal-day.today{background:var(--accent);color:#080810;font-weight:700}
+.mini-cal-day.selected{background:var(--accent2);color:#fff;font-weight:600}
+.mini-cal-day.has-data::after{content:'';display:block;width:3px;height:3px;border-radius:50%;background:var(--accent);margin:1px auto 0}
+.mini-cal-day.has-quest::after{background:var(--accent3)}
+.mini-cal-day.today.has-data::after{background:#080810}
+.mini-cal-day.empty{color:transparent;pointer-events:none}
+.sidebar-close{display:none;background:var(--surface2);border:1px solid var(--border);color:var(--text2);width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.sidebar-close:hover{background:var(--surface3);color:var(--text)}
+.sidebar-top-row{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.logo-text{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent)}
+.logo-sub{font-size:11px;color:var(--text3);margin-top:3px;letter-spacing:1px}
+.logout-btn{padding:6px 10px;background:transparent;border:1px solid var(--border);color:var(--text3);border-radius:6px;font-size:11px;cursor:pointer;font-family:'Space Mono',monospace;transition:all .15s}
+.logout-btn:hover{border-color:var(--red);color:var(--red)}
+
+/* ── MAIN ─────────────────────────────────── */
+.main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh;position:relative;z-index:1}
+.topbar{position:sticky;top:0;background:rgba(8,8,16,.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:12px 28px;display:flex;align-items:center;justify-content:space-between;z-index:50;gap:12px}
+.hamburger{display:none;background:var(--surface2);border:1px solid var(--border);color:var(--text);width:38px;height:38px;border-radius:var(--radius-sm);cursor:pointer;align-items:center;justify-content:center;flex-direction:column;gap:5px;flex-shrink:0;transition:all .15s}
+.hamburger:hover{background:var(--surface3)}
+.hamburger span{display:block;width:18px;height:2px;background:var(--text);border-radius:2px}
+.page-title{font-size:15px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:10px;flex:1}
+.topbar-actions{display:flex;gap:8px;align-items:center}
+.date-badge{font-family:'Space Mono',monospace;font-size:11px;color:var(--text2);background:var(--surface2);padding:5px 12px;border-radius:20px;border:1px solid var(--border);white-space:nowrap}
+.btn-icon{background:var(--surface2);border:1px solid var(--border);color:var(--text2);padding:6px 12px;border-radius:var(--radius-sm);font-size:13px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px;white-space:nowrap;font-family:'Sarabun',sans-serif}
+.btn-icon:hover{background:var(--surface3);color:var(--accent);border-color:var(--accent)}
+.topbar-level{font-family:'Space Mono',monospace;font-size:11px;font-weight:700;color:var(--gold);background:var(--gold-dim);padding:5px 12px;border-radius:20px;border:1px solid rgba(255,200,94,.25);display:flex;align-items:center;gap:5px}
+.content{padding:24px 28px;max-width:920px;width:100%;margin:0 auto}
+.view{display:none}
+.view.active{display:block;animation:fadeUp .28s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── IDENTITY HERO ─────────────────────────── */
+.identity-hero{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;margin-bottom:18px;position:relative;overflow:hidden}
+.identity-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3))}
+.identity-hero::after{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(94,255,192,.06),transparent 70%);pointer-events:none}
+.identity-grid{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center}
+.identity-title{font-family:'DM Serif Display',serif;font-size:24px;color:var(--text);margin-bottom:4px}
+.identity-sub{font-size:13px;color:var(--text2);font-family:'Space Mono',monospace;margin-bottom:14px}
+.identity-score-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.identity-score{font-family:'Space Mono',monospace;font-size:26px;font-weight:700;color:var(--accent)}
+.identity-label{font-size:12px;color:var(--text3)}
+.mood-row{display:flex;gap:6px;flex-wrap:wrap}
+.mood-btn{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:4px 11px;font-size:12px;cursor:pointer;transition:all .15s;color:var(--text2);display:flex;align-items:center;gap:4px;font-family:'Sarabun',sans-serif}
+.mood-btn:hover{border-color:var(--accent2);color:var(--text)}
+.mood-btn.selected{border-color:var(--accent2);background:var(--accent2-dim);color:var(--accent2)}
+.xp-ring-wrap{position:relative;width:90px;height:90px;flex-shrink:0}
+.xp-ring{transform:rotate(-90deg)}
+.xp-ring-bg{fill:none;stroke:var(--surface3);stroke-width:7}
+.xp-ring-fill{fill:none;stroke:var(--gold);stroke-width:7;stroke-linecap:round;transition:stroke-dashoffset .8s cubic-bezier(.4,0,.2,1)}
+.xp-ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.xp-ring-lvl{font-family:'Space Mono',monospace;font-size:18px;font-weight:700;color:var(--gold);line-height:1}
+.xp-ring-txt{font-size:9px;color:var(--text3);font-family:'Space Mono',monospace;letter-spacing:1px}
+.progress-bar-wrap{background:var(--surface3);border-radius:10px;height:7px;overflow:hidden;margin-top:4px}
+.progress-bar-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .6s ease}
+.level-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;margin-bottom:18px;position:relative;overflow:hidden}
+.level-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),#ff9f5e)}
+.level-card-inner{display:flex;align-items:center;gap:16px}
+.level-badge-big{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--gold-dim),rgba(255,159,94,.15));border:2px solid rgba(255,200,94,.35);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}
+.level-badge-num{font-family:'Space Mono',monospace;font-size:20px;font-weight:700;color:var(--gold);line-height:1}
+.level-badge-lbl{font-size:8px;color:var(--text3);font-family:'Space Mono',monospace;letter-spacing:1px}
+.level-info{flex:1;min-width:0}
+.level-name-big{font-size:16px;font-weight:700;color:var(--text);margin-bottom:2px}
+.level-xp-text{font-size:11px;color:var(--text3);font-family:'Space Mono',monospace;margin-bottom:8px}
+.level-bar-wrap{background:var(--surface3);border-radius:10px;height:8px;overflow:hidden}
+.level-bar-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--gold),#ff9f5e);transition:width 1s cubic-bezier(.4,0,.2,1)}
+.level-next{font-size:10px;color:var(--text3);font-family:'Space Mono',monospace;margin-top:5px}
+.xp-pop{position:fixed;font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:var(--gold);pointer-events:none;z-index:9999;animation:xpPop 1.2s ease forwards;text-shadow:0 2px 10px rgba(255,200,94,.5)}
+@keyframes xpPop{0%{transform:translateY(0) scale(.8);opacity:0}20%{transform:translateY(-10px) scale(1.2);opacity:1}80%{transform:translateY(-50px) scale(1);opacity:.8}100%{transform:translateY(-80px) scale(.9);opacity:0}}
+.weekly-trend{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:18px}
+.section-title{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);font-family:'Space Mono',monospace;margin-bottom:14px}
+.week-bars{display:flex;gap:8px;align-items:flex-end;height:80px}
+.week-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px}
+.week-bar-outer{flex:1;width:100%;background:var(--surface3);border-radius:6px;overflow:hidden;display:flex;align-items:flex-end}
+.week-bar-fill{width:100%;border-radius:6px;transition:height .6s ease;min-height:2px}
+.week-bar-fill.high{background:linear-gradient(180deg,var(--accent),rgba(94,255,192,.4))}
+.week-bar-fill.mid{background:linear-gradient(180deg,var(--gold),rgba(255,200,94,.4))}
+.week-bar-fill.low{background:linear-gradient(180deg,var(--red),rgba(255,94,122,.4))}
+.week-bar-fill.empty{background:var(--surface3)}
+.week-day-label{font-size:9px;font-family:'Space Mono',monospace;color:var(--text3);text-align:center}
+.week-pct{font-size:9px;font-family:'Space Mono',monospace;color:var(--text3);text-align:center}
+.insight-card{background:linear-gradient(135deg,rgba(94,255,192,.06),rgba(124,108,255,.06));border:1px solid rgba(94,255,192,.18);border-radius:var(--radius);padding:14px 18px;margin-bottom:18px;display:flex;align-items:flex-start;gap:12px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.insight-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--accent),var(--accent2))}
+.insight-card:hover{border-color:rgba(94,255,192,.35)}
+.insight-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+.insight-body{flex:1;min-width:0}
+.insight-title{font-size:12px;color:var(--accent);font-family:'Space Mono',monospace;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.insight-text{font-size:13px;color:var(--text2);line-height:1.6}
+.insight-refresh{color:var(--text3);font-size:13px;flex-shrink:0;transition:transform .3s;align-self:center}
+.insight-card:hover .insight-refresh{transform:rotate(180deg)}
+
+/* ── DAILY QUEST ─────────────────────────────── */
+.quest-section{margin-bottom:18px}
+.quest-header-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.quest-section-title{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent3);font-family:'Space Mono',monospace;display:flex;align-items:center;gap:8px}
+.quest-add-btn{font-size:12px;color:var(--accent3);background:var(--accent3-dim);border:1px solid rgba(255,108,180,.3);padding:5px 13px;border-radius:20px;cursor:pointer;transition:all .15s;font-family:'Sarabun',sans-serif;display:flex;align-items:center;gap:5px}
+.quest-add-btn:hover{background:rgba(255,108,180,.2)}
+.quest-empty{background:var(--surface);border:1px dashed rgba(255,108,180,.25);border-radius:var(--radius);padding:22px;text-align:center;color:var(--text3);font-size:13px}
+.quest-empty-icon{font-size:30px;margin-bottom:8px}
+.quest-card{background:var(--surface);border:1px solid rgba(255,108,180,.2);border-radius:var(--radius);margin-bottom:8px;overflow:hidden;transition:all .2s;position:relative}
+.quest-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--accent3),var(--accent2))}
+.quest-card.completed{border-color:rgba(94,255,192,.25);background:rgba(94,255,192,.02)}
+.quest-card.completed::before{background:linear-gradient(180deg,var(--accent),var(--accent2))}
+.quest-card-header{display:flex;align-items:center;gap:12px;padding:13px 16px 13px 20px;cursor:pointer;transition:background .15s}
+.quest-card-header:hover{background:rgba(255,255,255,.02)}
+.quest-card-icon{font-size:20px;flex-shrink:0}
+.quest-card-info{flex:1;min-width:0}
+.quest-card-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px}
+.quest-card-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.quest-xp-badge{font-size:10px;font-family:'Space Mono',monospace;color:var(--accent3);background:var(--accent3-dim);padding:1px 7px;border-radius:8px;border:1px solid rgba(255,108,180,.2)}
+.quest-progress-text{font-size:11px;color:var(--text3);font-family:'Space Mono',monospace}
+.quest-done-badge{font-size:10px;font-family:'Space Mono',monospace;color:var(--accent);background:var(--accent-dim);padding:1px 7px;border-radius:8px;display:none}
+.quest-card.completed .quest-done-badge{display:block}
+.quest-card-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.quest-chevron{color:var(--text3);font-size:14px;transition:transform .25s}
+.quest-card.open .quest-chevron{transform:rotate(180deg)}
+.quest-card-body{display:none;padding:0 16px 14px 20px;border-top:1px solid var(--border)}
+.quest-card.open .quest-card-body{display:block}
+.quest-desc{font-size:13px;color:var(--text2);padding:10px 0 12px;line-height:1.7;border-bottom:1px solid var(--border);margin-bottom:12px;font-style:italic}
+.quest-task-list{display:flex;flex-direction:column;gap:6px}
+.quest-task-item{display:flex;align-items:center;gap:11px;padding:9px 13px;border-radius:var(--radius-sm);background:var(--surface2);cursor:pointer;transition:all .15s;border:1px solid transparent;-webkit-tap-highlight-color:transparent}
+.quest-task-item:hover{background:var(--surface3)}
+.quest-task-item.checked{border-color:rgba(255,108,180,.2)}
+.quest-custom-check{width:20px;height:20px;border-radius:6px;border:2px solid rgba(255,108,180,.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.quest-task-item.checked .quest-custom-check{background:var(--accent3);border-color:var(--accent3);animation:popBounce .3s ease}
+@keyframes popBounce{0%{transform:scale(1)}40%{transform:scale(1.35)}70%{transform:scale(.9)}100%{transform:scale(1)}}
+.quest-check-mark{color:#fff;font-size:11px;font-weight:900;display:none}
+.quest-task-item.checked .quest-check-mark{display:block}
+.quest-task-text{font-size:13px;color:var(--text2);flex:1;transition:color .15s}
+.quest-task-item.checked .quest-task-text{color:var(--text3);text-decoration:line-through;text-decoration-color:var(--accent3)}
+.quest-task-xp{font-size:10px;font-family:'Space Mono',monospace;color:var(--text3)}
+.quest-card-actions{display:flex;gap:8px;margin-top:10px}
+.quest-edit-btn,.quest-del-btn{font-size:11px;font-family:'Space Mono',monospace;color:var(--text3);background:var(--surface2);border:1px solid var(--border);padding:4px 10px;border-radius:6px;cursor:pointer;transition:all .15s}
+.quest-edit-btn:hover{color:var(--accent2);border-color:var(--accent2)}
+.quest-del-btn:hover{color:var(--red);border-color:var(--red)}
+/* plan ahead section */
+.plan-ahead-card{background:linear-gradient(135deg,rgba(255,108,180,.05),rgba(124,108,255,.05));border:1px solid rgba(255,108,180,.18);border-radius:var(--radius);padding:16px 18px;margin-top:18px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .2s}
+.plan-ahead-card:hover{border-color:rgba(255,108,180,.35)}
+.plan-icon{font-size:24px}
+.plan-info{flex:1}
+.plan-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px}
+.plan-sub{font-size:11px;color:var(--text3);font-family:'Space Mono',monospace}
+.plan-arrow{color:var(--text3);font-size:18px}
+
+/* ── ROUTINE BLOCKS ────────────────────────── */
+.routine-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:9px;overflow:hidden;transition:all .2s}
+.routine-block:hover{border-color:var(--border2)}
+.routine-block.completed{border-color:rgba(94,255,192,.3);background:rgba(94,255,192,.02)}
+.block-header{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:13px 16px;cursor:pointer;user-select:none;transition:background .15s}
+.block-header:hover{background:rgba(255,255,255,.02)}
+.block-time{font-family:'Space Mono',monospace;font-size:10px;color:var(--text3);white-space:nowrap;min-width:82px}
+.block-info{flex:1;min-width:0}
+.block-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px}
+.block-meta{display:flex;align-items:center;gap:8px;margin-top:2px;flex-wrap:wrap}
+.block-progress-text{font-size:11px;color:var(--text3);font-family:'Space Mono',monospace}
+.block-xp-badge{font-size:10px;font-family:'Space Mono',monospace;color:var(--gold);background:var(--gold-dim);padding:1px 6px;border-radius:8px;border:1px solid rgba(255,200,94,.15)}
+.block-completed-banner{display:none;font-size:10px;color:var(--accent);font-family:'Space Mono',monospace;padding:2px 7px;background:var(--accent-dim);border-radius:4px}
+.routine-block.completed .block-completed-banner{display:block}
+.block-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.block-mini-progress{display:flex;gap:3px}
+.mini-dot{width:7px;height:7px;border-radius:50%;background:var(--surface3);transition:all .2s}
+.mini-dot.done{background:var(--accent);transform:scale(1.15)}
+.block-chevron{color:var(--text3);font-size:14px;transition:transform .25s}
+.routine-block.open .block-chevron{transform:rotate(180deg)}
+.block-body{display:none;padding:0 16px 14px;border-top:1px solid var(--border)}
+.routine-block.open .block-body{display:block}
+.block-quote{font-size:12px;color:var(--text3);font-style:italic;padding:10px 0 12px;line-height:1.7;border-bottom:1px solid var(--border);margin-bottom:12px}
+.block-actions{display:flex;gap:8px;margin-top:10px}
+.block-edit-btn{font-size:11px;font-family:'Space Mono',monospace;color:var(--text3);background:var(--surface2);border:1px solid var(--border);padding:4px 10px;border-radius:6px;cursor:pointer;transition:all .15s}
+.block-edit-btn:hover{color:var(--accent2);border-color:var(--accent2)}
+.block-delete-btn{font-size:11px;font-family:'Space Mono',monospace;color:var(--text3);background:var(--surface2);border:1px solid var(--border);padding:4px 10px;border-radius:6px;cursor:pointer;transition:all .15s}
+.block-delete-btn:hover{color:var(--red);border-color:var(--red)}
+.task-list{display:flex;flex-direction:column;gap:6px}
+.task-item{display:flex;align-items:center;gap:11px;padding:9px 13px;border-radius:var(--radius-sm);background:var(--surface2);cursor:pointer;transition:all .15s;border:1px solid transparent;-webkit-tap-highlight-color:transparent}
+.task-item:hover{background:var(--surface3)}
+.task-item.checked{border-color:rgba(94,255,192,.18)}
+.custom-check{width:20px;height:20px;border-radius:6px;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.task-item.checked .custom-check{background:var(--accent);border-color:var(--accent);animation:popBounce .3s ease}
+.check-mark{color:#080810;font-size:11px;font-weight:900;display:none}
+.task-item.checked .check-mark{display:block}
+.task-text{font-size:13px;color:var(--text2);flex:1;transition:color .15s}
+.task-item.checked .task-text{color:var(--text3);text-decoration:line-through;text-decoration-color:var(--accent)}
+.task-diff{font-size:10px;font-family:'Space Mono',monospace;color:var(--text3);flex-shrink:0}
+.add-block-wrap{text-align:center;margin-bottom:16px}
+.add-block-btn{background:var(--surface);border:1px dashed var(--border2);color:var(--text3);padding:12px 28px;border-radius:var(--radius);font-size:13px;cursor:pointer;transition:all .2s;font-family:'Sarabun',sans-serif;display:inline-flex;align-items:center;gap:8px;width:100%}
+.add-block-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+
+/* ── MODALS ────────────────────────────────── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:500;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .3s;padding:16px}
+.modal-overlay.show{opacity:1;pointer-events:all}
+.modal-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:28px;width:100%;max-width:500px;animation:modalPop .35s cubic-bezier(.175,.885,.32,1.275);max-height:90vh;overflow-y:auto}
+@keyframes modalPop{from{transform:scale(.88);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-title{font-family:'DM Serif Display',serif;font-size:20px;color:var(--text);margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.form-group{margin-bottom:14px}
+.form-label{font-size:11px;font-family:'Space Mono',monospace;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;display:block}
+.form-input{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'Sarabun',sans-serif;font-size:14px;padding:10px 14px;border-radius:var(--radius-sm);outline:none;transition:border-color .2s}
+.form-input:focus{border-color:var(--accent2)}
+.form-input::placeholder{color:var(--text3)}
+.form-select{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'Sarabun',sans-serif;font-size:14px;padding:10px 14px;border-radius:var(--radius-sm);outline:none;cursor:pointer;appearance:none}
+.form-select:focus{border-color:var(--accent2)}
+.task-inputs{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.task-input-row{display:flex;gap:8px;align-items:center}
+.task-input-row .form-input{flex:1}
+.task-input-xp{width:70px;flex-shrink:0}
+.task-remove-btn{width:30px;height:30px;border-radius:6px;background:var(--surface2);border:1px solid var(--border);color:var(--red);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.task-remove-btn:hover{background:rgba(255,94,122,.15);border-color:var(--red)}
+.add-task-input-btn{font-size:12px;color:var(--accent);background:var(--accent-dim);border:1px solid rgba(94,255,192,.25);padding:6px 14px;border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;font-family:'Sarabun',sans-serif;margin-top:4px}
+.add-task-input-btn:hover{background:rgba(94,255,192,.2)}
+.modal-footer{display:flex;gap:10px;margin-top:22px}
+.modal-save-btn{flex:1;background:var(--accent2);color:#fff;border:none;border-radius:var(--radius-sm);padding:12px;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;font-family:'Sarabun',sans-serif}
+.modal-save-btn:hover{opacity:.85;transform:translateY(-1px)}
+.modal-cancel-btn{padding:12px 22px;background:var(--surface2);border:1px solid var(--border);color:var(--text2);border-radius:var(--radius-sm);cursor:pointer;font-size:14px;transition:all .15s;font-family:'Sarabun',sans-serif}
+.modal-cancel-btn:hover{background:var(--surface3);color:var(--text)}
+.modal-save-quest-btn{flex:1;background:linear-gradient(135deg,var(--accent3),var(--accent2));color:#fff;border:none;border-radius:var(--radius-sm);padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Sarabun',sans-serif;transition:all .15s}
+.modal-save-quest-btn:hover{opacity:.85;transform:translateY(-1px)}
+.avatar-upload-area{display:flex;flex-direction:column;align-items:center;gap:12px;padding:20px;background:var(--surface2);border-radius:var(--radius-sm);border:1px dashed var(--border2);cursor:pointer;transition:all .2s;margin-bottom:14px}
+.avatar-upload-area:hover{border-color:var(--accent2);background:var(--accent2-dim)}
+.avatar-preview-lg{width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--accent);background:var(--surface3)}
+.avatar-hint{font-size:12px;color:var(--text3);font-family:'Space Mono',monospace}
+/* ICON PICKER */
+.icon-picker-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-top:8px;max-height:160px;overflow-y:auto}
+.icon-option{font-size:22px;padding:6px;border-radius:8px;cursor:pointer;text-align:center;border:2px solid transparent;transition:all .15s;background:var(--surface2)}
+.icon-option:hover{transform:scale(1.2);background:var(--surface3)}
+.icon-option.selected{border-color:var(--accent3);background:var(--accent3-dim)}
+.quest-date-display{font-family:'Space Mono',monospace;font-size:12px;color:var(--accent3);background:var(--accent3-dim);padding:6px 14px;border-radius:8px;border:1px solid rgba(255,108,180,.25);margin-bottom:4px}
+
+/* ── STATS / BADGES / CALENDAR / JOURNAL (compact) ── */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;transition:all .2s}
+.stat-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.stat-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);font-family:'Space Mono',monospace;margin-bottom:8px}
+.stat-value{font-size:26px;font-weight:700;font-family:'Space Mono',monospace;color:var(--accent);line-height:1}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:6px}
+.failure-card,.insights-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px}
+.failure-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.failure-item{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border)}
+.failure-bar-wrap{flex:1;background:var(--surface3);border-radius:6px;height:6px;overflow:hidden}
+.failure-bar-fill{height:100%;border-radius:6px;background:var(--red);transition:width .6s ease}
+.failure-name{font-size:13px;color:var(--text2);min-width:120px}
+.failure-pct{font-size:11px;font-family:'Space Mono',monospace;color:var(--text3);min-width:36px;text-align:right}
+.insight-row{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:var(--surface2);border-radius:var(--radius-sm);margin-bottom:8px;border-left:3px solid var(--accent2)}
+.insight-row.warn{border-left-color:var(--gold)}
+.insight-row.good{border-left-color:var(--accent)}
+.insight-row-icon{font-size:18px;flex-shrink:0}
+.insight-row-text{font-size:13px;color:var(--text2);line-height:1.6}
+.heatmap-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px;overflow-x:auto}
+.heatmap-grid{display:flex;gap:3px;flex-wrap:wrap;min-width:280px}
+.hm-cell{width:13px;height:13px;border-radius:3px;background:var(--surface3);cursor:default;transition:transform .1s}
+.hm-cell:hover{transform:scale(1.4);z-index:2}
+.hm-cell[data-level="1"]{background:rgba(94,255,192,.2)}
+.hm-cell[data-level="2"]{background:rgba(94,255,192,.45)}
+.hm-cell[data-level="3"]{background:rgba(94,255,192,.72)}
+.hm-cell[data-level="4"]{background:rgba(94,255,192,1)}
+.badges-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px}
+.badge-category-title{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent2);font-family:'Space Mono',monospace;margin:18px 0 10px;padding:6px 0;border-bottom:1px solid var(--border)}
+.badge-category-title:first-child{margin-top:0}
+.all-badges-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-top:4px}
+.badge-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px 12px;text-align:center;transition:all .2s;position:relative;overflow:hidden}
+.badge-card:hover:not(.locked){transform:translateY(-3px);border-color:var(--gold);box-shadow:0 4px 20px rgba(255,200,94,.15)}
+.badge-card.locked{opacity:.35;filter:grayscale(1)}
+.badge-card-icon{font-size:28px;margin-bottom:8px}
+.badge-card-name{font-size:12px;font-weight:600;color:var(--text);margin-bottom:3px}
+.badge-card-desc{font-size:11px;color:var(--text3);line-height:1.5}
+.badge-card.earned::after{content:'✓';position:absolute;top:6px;right:8px;font-size:10px;color:var(--accent);font-family:'Space Mono',monospace;font-weight:700}
+.badge-count-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding:12px 16px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border)}
+.badge-count-text{font-size:13px;color:var(--text2)}
+.badge-count-num{font-family:'Space Mono',monospace;font-size:20px;font-weight:700;color:var(--gold)}
+.full-calendar{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:20px}
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.cal-month-title{font-size:18px;font-weight:700;font-family:'Space Mono',monospace;color:var(--text)}
+.cal-nav-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:7px 13px;border-radius:var(--radius-sm);cursor:pointer;font-size:15px;transition:all .15s}
+.cal-nav-btn:hover{background:var(--surface3)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.cal-day-header{text-align:center;font-size:10px;letter-spacing:1px;color:var(--text3);padding:5px;font-family:'Space Mono',monospace;text-transform:uppercase}
+.cal-day{aspect-ratio:1;border-radius:var(--radius-sm);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;border:1px solid transparent;transition:all .15s;background:var(--surface2);gap:2px;-webkit-tap-highlight-color:transparent;position:relative}
+.cal-day:hover{border-color:var(--border2);background:var(--surface3);transform:scale(1.06)}
+.cal-day.empty{background:transparent;cursor:default;pointer-events:none}
+.cal-day.today{border-color:var(--accent)}
+.cal-day-num{font-size:12px;font-family:'Space Mono',monospace;font-weight:600;color:var(--text2)}
+.cal-day.today .cal-day-num{color:var(--accent)}
+.cal-day-pct{font-size:9px;font-family:'Space Mono',monospace;color:var(--text3)}
+.cal-day-bar{width:68%;height:3px;border-radius:2px;background:var(--surface3);overflow:hidden}
+.cal-day-bar-fill{height:100%;border-radius:2px;background:var(--accent);transition:width .3s}
+.cal-day-bar-fill.mid{background:var(--gold)}
+.cal-day-bar-fill.low{background:var(--red)}
+.cal-day-quest-dot{position:absolute;top:4px;right:4px;width:5px;height:5px;border-radius:50%;background:var(--accent3)}
+.cal-legend{display:flex;gap:14px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);flex-wrap:wrap}
+.cal-legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3);font-family:'Space Mono',monospace}
+.cal-legend-dot{width:9px;height:9px;border-radius:2px}
+.journal-date-nav{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.journal-date-display{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;flex:1;text-align:center;color:var(--text)}
+.journal-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:12px}
+.journal-card:focus-within{border-color:rgba(124,108,255,.4)}
+.journal-card-title{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);font-family:'Space Mono',monospace;margin-bottom:12px}
+.journal-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'Sarabun',sans-serif;font-size:14px;line-height:1.8;padding:12px 15px;resize:vertical;min-height:90px;outline:none;transition:border-color .2s}
+.journal-textarea:focus{border-color:var(--accent2)}
+.journal-textarea::placeholder{color:var(--text3)}
+.journal-footer{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.char-count{font-size:11px;color:var(--text3);font-family:'Space Mono',monospace}
+.journal-save-btn{padding:9px 22px;background:var(--accent2);color:#fff;border:none;border-radius:var(--radius-sm);font-family:'Sarabun',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.journal-save-btn:hover{opacity:.85;transform:translateY(-1px)}
+.saved-badge{display:inline-flex;align-items:center;gap:4px;color:var(--accent);font-size:11px;margin-left:10px;opacity:0;transition:opacity .3s;font-family:'Space Mono',monospace}
+.saved-badge.show{opacity:1}
+
+/* ── FAB / BOTTOM NAV ─── */
+.fab-cal{position:fixed;bottom:26px;right:26px;width:50px;height:50px;background:var(--accent2);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 4px 24px rgba(124,108,255,.45);z-index:80;transition:all .2s}
+.fab-cal:hover{transform:scale(1.12) rotate(8deg)}
+.mobile-bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(13,13,24,.97);border-top:1px solid var(--border);backdrop-filter:blur(16px);z-index:85;padding:8px 0 max(8px,env(safe-area-inset-bottom))}
+.mobile-nav-items{display:flex;justify-content:space-around}
+.mobile-nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 12px;border-radius:var(--radius-sm);cursor:pointer;color:var(--text3);font-size:9px;font-family:'Space Mono',monospace;transition:all .15s;flex:1;letter-spacing:.5px;text-transform:uppercase;-webkit-tap-highlight-color:transparent}
+.mobile-nav-item .mn-icon{font-size:18px;transition:transform .2s}
+.mobile-nav-item.active{color:var(--accent)}
+.mobile-nav-item.active .mn-icon{transform:scale(1.2)}
+.toast{position:fixed;bottom:86px;right:22px;background:var(--surface2);border:1px solid var(--accent);border-radius:var(--radius-sm);padding:10px 16px;font-size:12px;color:var(--accent);font-family:'Space Mono',monospace;z-index:1000;transform:translateY(20px);opacity:0;transition:all .3s;pointer-events:none;box-shadow:0 4px 20px rgba(94,255,192,.15)}
+.toast.show{transform:translateY(0);opacity:1}
+.levelup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:2000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(8px)}
+.levelup-overlay.show{opacity:1;pointer-events:all}
+.levelup-card{background:var(--surface);border:2px solid var(--gold);border-radius:20px;padding:48px 52px;text-align:center;animation:levelUpPop .5s cubic-bezier(.175,.885,.32,1.275);max-width:380px;width:90%;position:relative;overflow:hidden}
+.levelup-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--gold),#ff9f5e,var(--gold))}
+@keyframes levelUpPop{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+.levelup-icon{font-size:64px;margin-bottom:14px;animation:spin1 .6s ease;display:block}
+@keyframes spin1{from{transform:rotate(-20deg) scale(.8)}to{transform:rotate(0) scale(1)}}
+.levelup-title{font-family:'DM Serif Display',serif;font-size:28px;color:var(--gold);margin-bottom:6px}
+.levelup-sub{font-size:14px;color:var(--text2);margin-bottom:8px}
+.levelup-name{font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:var(--accent);margin-bottom:24px;letter-spacing:2px}
+.levelup-btn{background:linear-gradient(135deg,var(--gold),#ff9f5e);color:#080810;border:none;border-radius:var(--radius-sm);padding:12px 32px;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;cursor:pointer}
+.badge-unlock-overlay{position:fixed;bottom:100px;right:22px;background:var(--surface);border:1px solid var(--gold);border-radius:14px;padding:14px 18px;z-index:1500;display:flex;align-items:center;gap:12px;opacity:0;transform:translateX(120%);transition:all .4s cubic-bezier(.175,.885,.32,1.275);pointer-events:none;box-shadow:0 4px 24px rgba(255,200,94,.2)}
+.badge-unlock-overlay.show{opacity:1;transform:translateX(0)}
+.badge-unlock-icon{font-size:32px}
+.badge-unlock-label{font-size:10px;color:var(--gold);font-family:'Space Mono',monospace;letter-spacing:1px;text-transform:uppercase}
+.badge-unlock-name{font-size:14px;font-weight:700;color:var(--text)}
+.confetti-piece{position:fixed;width:8px;height:8px;border-radius:2px;pointer-events:none;z-index:9999;animation:confettiFall 1.8s ease forwards}
+@keyframes confettiFall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+/* Plan view */
+.plan-view-header{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:18px}
+.plan-view-title{font-family:'DM Serif Display',serif;font-size:22px;color:var(--text);margin-bottom:6px}
+.plan-view-sub{font-size:12px;color:var(--text3);font-family:'Space Mono',monospace}
+.plan-day-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:18px}
+.plan-day-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;cursor:pointer;transition:all .2s;text-align:center}
+.plan-day-card:hover{border-color:var(--accent3);background:var(--accent3-dim)}
+.plan-day-card.today{border-color:var(--accent);background:var(--accent-dim)}
+.plan-day-card.has-quest{border-color:rgba(255,108,180,.3)}
+.plan-day-date{font-family:'Space Mono',monospace;font-size:11px;color:var(--text3);margin-bottom:4px}
+.plan-day-num{font-size:22px;font-weight:700;color:var(--text);margin-bottom:6px}
+.plan-day-quest-count{font-size:11px;color:var(--accent3);font-family:'Space Mono',monospace}
+
+/* ── RESPONSIVE ─── */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%);width:290px}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-close{display:flex}
+  .sidebar-overlay{display:block}
+  .main{margin-left:0!important;padding-bottom:70px}
+  .hamburger{display:flex}
+  .topbar{padding:11px 14px}
+  .topbar-actions .date-badge{display:none}
+  .content{padding:14px 14px}
+  .stats-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .identity-grid{grid-template-columns:1fr}
+  .xp-ring-wrap{display:none}
+  .fab-cal{bottom:84px;right:14px}
+  .mobile-bottom-nav{display:block}
+  .block-time{min-width:68px;font-size:9px}
+  .all-badges-grid{grid-template-columns:repeat(auto-fill,minmax(110px,1fr))}
+  .auth-card{padding:28px 20px}
+}
+@media(max-width:480px){
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .stat-value{font-size:20px}
+  .block-mini-progress{display:none}
+  .mood-btn{padding:3px 8px;font-size:11px}
+  .modal-card{padding:20px}
+}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--border)}
+</style>
+</head>
+<body>
+
+<!-- ── AUTH SCREEN ── -->
+<div id="authScreen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="auth-logo-title">⚡ Discipline OS</div>
+      <div class="auth-logo-sub">1% Better Every Day</div>
+    </div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">เข้าสู่ระบบ</div>
+      <div class="auth-tab" id="tabRegister" onclick="switchAuthTab('register')">สมัครสมาชิก</div>
+    </div>
+    <!-- Login -->
+    <div id="loginForm" class="auth-form">
+      <div class="auth-error" id="loginError"></div>
+      <input class="auth-input" id="loginUsername" placeholder="ชื่อผู้ใช้" autocomplete="username">
+      <input class="auth-input" id="loginPassword" type="password" placeholder="รหัสผ่าน" autocomplete="current-password">
+      <button class="auth-btn" onclick="doLogin()">🔑 เข้าสู่ระบบ</button>
+    </div>
+    <!-- Register -->
+    <div id="registerForm" class="auth-form" style="display:none">
+      <div class="auth-error" id="registerError"></div>
+      <input class="auth-input" id="regName" placeholder="ชื่อของคุณ (แสดงในโปรไฟล์)" maxlength="30">
+      <input class="auth-input" id="regUsername" placeholder="ชื่อผู้ใช้ (สำหรับล็อกอิน)" maxlength="20" autocomplete="username">
+      <input class="auth-input" id="regPassword" type="password" placeholder="รหัสผ่าน (อย่างน้อย 4 ตัว)" autocomplete="new-password">
+      <input class="auth-input" id="regPassword2" type="password" placeholder="ยืนยันรหัสผ่าน" autocomplete="new-password">
+      <button class="auth-btn" onclick="doRegister()">✨ สมัครสมาชิก</button>
+    </div>
+    <div style="margin-top:16px">
+      <div class="auth-divider" id="savedUsersSection" style="display:none">บัญชีที่บันทึกไว้</div>
+      <div class="user-list" id="savedUsersList" style="display:none"></div>
+    </div>
+    <div style="margin-top:14px">
+      <div class="auth-divider">หรือ</div>
+      <button class="guest-btn" style="margin-top:10px" onclick="loginAsGuest()">👤 เข้าแบบไม่สมัคร (Guest)</button>
+    </div>
+    <div class="auth-hint">ข้อมูลเก็บในอุปกรณ์ของคุณ ไม่ได้ส่งออกไปที่ไหน</div>
+  </div>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-top-row">
+    <div>
+      <div class="logo-text">Discipline OS</div>
+      <div class="logo-sub">1% Daily System</div>
+    </div>
+    <div style="display:flex;gap:6px;align-items:center">
+      <button class="logout-btn" onclick="doLogout()">ออก</button>
+      <button class="sidebar-close" onclick="closeSidebar()">✕</button>
+    </div>
+  </div>
+  <div class="profile-area" onclick="openProfileModal()">
+    <div class="profile-row">
+      <div class="avatar-wrap">
+        <img class="avatar-img" id="sidebarAvatar" src="data:image/svg+xml,%3Csvg viewBox='0 0 52 52' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='52' height='52' fill='%23202035'/%3E%3Ccircle cx='26' cy='20' r='10' fill='%23444466'/%3E%3Cellipse cx='26' cy='46' rx='16' ry='12' fill='%23444466'/%3E%3C/svg%3E" alt="avatar">
+        <div class="avatar-edit-btn">✎</div>
+      </div>
+      <div class="profile-info">
+        <div class="profile-name" id="sidebarProfileName">ชื่อของคุณ</div>
+        <div class="profile-title" id="sidebarProfileTitle">Beginner</div>
+        <div class="profile-edit-hint">แตะเพื่อแก้ไข</div>
+      </div>
+    </div>
+  </div>
+  <div class="sidebar-xp">
+    <div class="xp-header">
+      <div class="xp-level" id="sidebarLevel">LVL 1</div>
+      <div class="xp-pts" id="sidebarXP">0 / 1000 XP</div>
+    </div>
+    <div class="xp-bar-wrap"><div class="xp-bar-fill" id="sidebarXPBar" style="width:0%"></div></div>
+    <div class="identity-tag">คุณคือ <span class="identity-pct" id="sidebarIdentityPct">0%</span> Disciplined</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">เมนู</div>
+    <div class="nav-item active" id="nav-routine" onclick="switchView('routine',this)"><span class="nav-icon">⚡</span> Routine วันนี้</div>
+    <div class="nav-item" id="nav-quest" onclick="switchView('quest',this)"><span class="nav-icon">🎯</span> Daily Quests <span class="nav-quest-badge" id="navQuestBadge">0</span></div>
+    <div class="nav-item" id="nav-plan" onclick="switchView('plan',this)"><span class="nav-icon">📋</span> วางแผนล่วงหน้า</div>
+    <div class="nav-item" id="nav-calendar" onclick="switchView('calendar',this)"><span class="nav-icon">📅</span> ปฏิทิน</div>
+    <div class="nav-item" id="nav-stats" onclick="switchView('stats',this)"><span class="nav-icon">📊</span> สถิติ</div>
+    <div class="nav-item" id="nav-badges" onclick="switchView('badges',this)"><span class="nav-icon">🏆</span> Badges <span class="nav-xp-badge" id="navBadgeCount">0</span></div>
+    <div class="nav-item" id="nav-journal" onclick="switchView('journal',this)"><span class="nav-icon">📝</span> บันทึก</div>
+  </div>
+  <div class="theme-section">
+    <div class="theme-title">🎨 Theme</div>
+    <div class="theme-grid">
+      <div class="theme-dot td-default active" id="td-default" onclick="applyTheme('default')"></div>
+      <div class="theme-dot td-ocean" id="td-ocean" onclick="applyTheme('ocean')"></div>
+      <div class="theme-dot td-sakura" id="td-sakura" onclick="applyTheme('sakura')"></div>
+      <div class="theme-dot td-forest" id="td-forest" onclick="applyTheme('forest')"></div>
+      <div class="theme-dot td-amber" id="td-amber" onclick="applyTheme('amber')"></div>
+      <div class="theme-dot td-mono" id="td-mono" onclick="applyTheme('mono')"></div>
+    </div>
+  </div>
+  <div class="sidebar-badges">
+    <div class="badges-title">Badges ล่าสุด</div>
+    <div class="badge-grid" id="sidebarBadgeGrid"></div>
+  </div>
+  <div class="sidebar-calendar">
+    <div class="mini-cal-header">
+      <div class="mini-cal-title" id="miniCalTitle"></div>
+      <div style="display:flex;gap:2px">
+        <button class="mini-cal-nav" onclick="miniCalNav(-1)">‹</button>
+        <button class="mini-cal-nav" onclick="miniCalNav(1)">›</button>
+      </div>
+    </div>
+    <div class="mini-cal-grid" id="miniCalGrid"></div>
+  </div>
+</nav>
+
+<div class="main" id="main">
+  <div class="topbar">
+    <button class="hamburger" onclick="openSidebar()"><span></span><span></span><span></span></button>
+    <div class="page-title"><span id="topbarIcon">⚡</span><span id="topbarTitle">Routine วันนี้</span></div>
+    <div class="topbar-actions">
+      <div class="topbar-level" id="topbarLevel">⭐ LVL 1</div>
+      <button class="btn-icon" onclick="switchView('calendar',document.getElementById('nav-calendar'))">📅 <span id="topbarDate"></span></button>
+    </div>
+  </div>
+  <div class="content">
+
+    <!-- ROUTINE VIEW -->
+    <div class="view active" id="view-routine">
+      <div class="identity-hero">
+        <div class="identity-grid">
+          <div>
+            <div class="identity-title" id="routineDateTitle">Routine วันนี้</div>
+            <div class="identity-sub" id="routineDateSub"></div>
+            <div class="identity-score-row">
+              <div class="identity-score" id="identityScore">0%</div>
+              <div class="identity-label">วินัยวันนี้</div>
+              <div id="trendIndicator" style="font-size:18px"></div>
+            </div>
+            <div class="mood-row" id="moodRow">
+              <button class="mood-btn" data-mood="🔥" onclick="selectMood(this)">🔥 ไฟแรง</button>
+              <button class="mood-btn" data-mood="😊" onclick="selectMood(this)">😊 ดี</button>
+              <button class="mood-btn" data-mood="😐" onclick="selectMood(this)">😐 โอเค</button>
+              <button class="mood-btn" data-mood="😴" onclick="selectMood(this)">😴 เหนื่อย</button>
+            </div>
+            <div class="progress-bar-wrap" style="margin-top:14px;max-width:300px">
+              <div class="progress-bar-fill" id="progressBar" style="width:0%"></div>
+            </div>
+          </div>
+          <div class="xp-ring-wrap">
+            <svg class="xp-ring" width="90" height="90" viewBox="0 0 90 90">
+              <circle class="xp-ring-bg" cx="45" cy="45" r="38"/>
+              <circle class="xp-ring-fill" id="xpRingFill" cx="45" cy="45" r="38" stroke-dasharray="238.7" stroke-dashoffset="238.7"/>
+            </svg>
+            <div class="xp-ring-center">
+              <div class="xp-ring-lvl" id="xpRingLevel">1</div>
+              <div class="xp-ring-txt">LEVEL</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="level-card">
+        <div class="level-card-inner">
+          <div class="level-badge-big">
+            <div class="level-badge-num" id="levelBadgeNum">1</div>
+            <div class="level-badge-lbl">LEVEL</div>
+          </div>
+          <div class="level-info">
+            <div class="level-name-big" id="levelNameBig">Beginner</div>
+            <div class="level-xp-text" id="levelXpText">0 / 1,000 XP</div>
+            <div class="level-bar-wrap"><div class="level-bar-fill" id="levelBarFill" style="width:0%"></div></div>
+            <div class="level-next" id="levelNext">อีก 1,000 XP → Level 2</div>
+          </div>
+        </div>
+      </div>
+      <div class="weekly-trend">
+        <div class="section-title">📈 WEEKLY TREND <span id="trendLabel" style="color:var(--text2);margin-left:8px"></span></div>
+        <div class="week-bars" id="weekBars"></div>
+      </div>
+      <div class="insight-card" onclick="nextInsight()">
+        <div class="insight-icon">💡</div>
+        <div class="insight-body">
+          <div class="insight-title">INSIGHT</div>
+          <div class="insight-text" id="insightText">กำลังวิเคราะห์ข้อมูล...</div>
+        </div>
+        <div class="insight-refresh">↻</div>
+      </div>
+      <!-- Daily Quests mini in routine -->
+      <div class="quest-section" id="routineQuestMini"></div>
+      <div id="routineList"></div>
+      <div class="add-block-wrap"><button class="add-block-btn" onclick="openAddBlockModal()">➕ เพิ่ม Block ใหม่</button></div>
+    </div>
+
+    <!-- QUEST VIEW -->
+    <div class="view" id="view-quest">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+        <div>
+          <div style="font-family:'DM Serif Display',serif;font-size:22px;color:var(--text);margin-bottom:4px">🎯 Daily Quests</div>
+          <div style="font-size:12px;color:var(--text3);font-family:'Space Mono',monospace" id="questViewDateLabel"></div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="cal-nav-btn" onclick="questNav(-1)" id="questPrevBtn">◀</button>
+          <div style="font-family:'Space Mono',monospace;font-size:12px;color:var(--text2);min-width:100px;text-align:center" id="questDateLabel2"></div>
+          <button class="cal-nav-btn" onclick="questNav(1)" id="questNextBtn">▶</button>
+        </div>
+      </div>
+      <div id="questList"></div>
+      <div style="text-align:center;margin-top:10px">
+        <button class="quest-add-btn" style="display:inline-flex;padding:10px 22px;border-radius:var(--radius-sm);font-size:13px" onclick="openQuestModal()">✨ สร้าง Quest ใหม่</button>
+      </div>
+      <div class="plan-ahead-card" onclick="switchView('plan',document.getElementById('nav-plan'))">
+        <div class="plan-icon">📋</div>
+        <div class="plan-info">
+          <div class="plan-title">วางแผน Quest ล่วงหน้า</div>
+          <div class="plan-sub">เตรียมพรุ่งนี้และสัปดาห์หน้าให้พร้อม</div>
+        </div>
+        <div class="plan-arrow">›</div>
+      </div>
+    </div>
+
+    <!-- PLAN VIEW -->
+    <div class="view" id="view-plan">
+      <div class="plan-view-header">
+        <div class="plan-view-title">📋 วางแผนล่วงหน้า</div>
+        <div class="plan-view-sub">เลือกวันที่ต้องการวาง Quest · คลิกวันเพื่อสร้าง/ดู Quest</div>
+      </div>
+      <div class="plan-day-grid" id="planDayGrid"></div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px" id="planDayDetail">
+        <div style="font-size:13px;color:var(--text3);text-align:center;padding:20px 0">เลือกวันเพื่อดู/เพิ่ม Quest</div>
+      </div>
+    </div>
+
+    <!-- CALENDAR VIEW -->
+    <div class="view" id="view-calendar">
+      <div class="full-calendar">
+        <div class="cal-header">
+          <button class="cal-nav-btn" onclick="calNav(-1)">◀</button>
+          <div class="cal-month-title" id="calMonthTitle"></div>
+          <button class="cal-nav-btn" onclick="calNav(1)">▶</button>
+        </div>
+        <div class="cal-grid" id="fullCalGrid"></div>
+        <div class="cal-legend">
+          <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--accent)"></div>≥80%</div>
+          <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--gold)"></div>50–79%</div>
+          <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--red)"></div>&lt;50%</div>
+          <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--accent3)"></div>มี Quest</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATS VIEW -->
+    <div class="view" id="view-stats">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-label">🔥 Streak</div><div class="stat-value" id="statStreak">0</div><div class="stat-sub">วันติดต่อกัน</div></div>
+        <div class="stat-card"><div class="stat-label">⭐ Level</div><div class="stat-value" id="statLevel" style="color:var(--gold)">1</div><div class="stat-sub">ระดับวินัย</div></div>
+        <div class="stat-card"><div class="stat-label">💰 XP รวม</div><div class="stat-value" id="statXP" style="color:var(--gold)">0</div><div class="stat-sub">Experience Points</div></div>
+        <div class="stat-card"><div class="stat-label">⭐ เฉลี่ย</div><div class="stat-value" id="statAvg">0%</div><div class="stat-sub">เฉลี่ยทุกวัน</div></div>
+        <div class="stat-card"><div class="stat-label">🏆 100% วัน</div><div class="stat-value" id="statPerfect">0</div><div class="stat-sub">วันที่สมบูรณ์</div></div>
+        <div class="stat-card"><div class="stat-label">🎯 Quests</div><div class="stat-value" id="statQuests" style="color:var(--accent3)">0</div><div class="stat-sub">quests สำเร็จรวม</div></div>
+      </div>
+      <div class="insights-card"><div class="section-title">🧠 INTELLIGENT INSIGHTS</div><div id="advancedInsights"></div></div>
+      <div class="failure-card"><div class="section-title">⚠️ FAILURE PATTERNS</div><div class="failure-list" id="failureList"></div></div>
+      <div class="heatmap-wrap">
+        <div class="section-title">📆 ACTIVITY HEATMAP — 90 วันล่าสุด</div>
+        <div class="heatmap-grid" id="heatmapGrid"></div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:10px;font-size:11px;color:var(--text3);font-family:'Space Mono',monospace">
+          น้อย
+          <div style="width:11px;height:11px;border-radius:2px;background:var(--surface3)"></div>
+          <div style="width:11px;height:11px;border-radius:2px;background:rgba(94,255,192,.2)"></div>
+          <div style="width:11px;height:11px;border-radius:2px;background:rgba(94,255,192,.45)"></div>
+          <div style="width:11px;height:11px;border-radius:2px;background:rgba(94,255,192,.72)"></div>
+          <div style="width:11px;height:11px;border-radius:2px;background:rgba(94,255,192,1)"></div>
+          มาก
+        </div>
+      </div>
+    </div>
+
+    <!-- BADGES VIEW -->
+    <div class="view" id="view-badges">
+      <div class="badges-section">
+        <div class="badge-count-bar">
+          <div class="badge-count-text">Badges ที่ได้รับแล้ว</div>
+          <div><span class="badge-count-num" id="badgeEarnedCount">0</span><span style="font-family:'Space Mono',monospace;color:var(--text3);font-size:14px"> / <span id="badgeTotalCount">0</span></span></div>
+        </div>
+        <div id="allBadgesContainer"></div>
+      </div>
+    </div>
+
+    <!-- JOURNAL VIEW -->
+    <div class="view" id="view-journal">
+      <div class="journal-date-nav">
+        <button class="cal-nav-btn" onclick="journalNav(-1)">◀</button>
+        <div class="journal-date-display" id="journalDateDisplay"></div>
+        <button class="cal-nav-btn" onclick="journalNav(1)">▶</button>
+      </div>
+      <div class="journal-card">
+        <div class="journal-card-title">🌅 เป้าหมายวันนี้</div>
+        <textarea class="journal-textarea" id="journalGoals" rows="3" placeholder="เป้าหมายที่ต้องการทำสำเร็จวันนี้..."></textarea>
+        <div class="journal-footer"><div class="char-count" id="ccGoals">0 ตัว</div></div>
+      </div>
+      <div class="journal-card">
+        <div class="journal-card-title">💭 Gratitude 3 ข้อ</div>
+        <textarea class="journal-textarea" id="journalGratitude" rows="3" placeholder="สิ่งที่ขอบคุณวันนี้..."></textarea>
+        <div class="journal-footer"><div class="char-count" id="ccGratitude">0 ตัว</div></div>
+      </div>
+      <div class="journal-card">
+        <div class="journal-card-title">📚 สิ่งที่เรียนรู้</div>
+        <textarea class="journal-textarea" id="journalLearned" rows="3" placeholder="สิ่งที่ได้เรียนรู้วันนี้..."></textarea>
+        <div class="journal-footer"><div class="char-count" id="ccLearned">0 ตัว</div></div>
+      </div>
+      <div class="journal-card">
+        <div class="journal-card-title">🌙 Daily Reflection</div>
+        <textarea class="journal-textarea" id="journalReflection" rows="5" placeholder="สรุปวันนี้ รู้สึกอย่างไร ทำได้ดีแค่ไหน..."></textarea>
+        <div class="journal-footer"><div class="char-count" id="ccReflection">0 ตัว</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:4px">
+        <button class="journal-save-btn" onclick="saveJournal()">💾 บันทึก</button>
+        <span class="saved-badge" id="journalSavedBadge">✓ บันทึกแล้ว</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<button class="fab-cal" onclick="switchView('calendar',document.getElementById('nav-calendar'))">📅</button>
+
+<nav class="mobile-bottom-nav">
+  <div class="mobile-nav-items">
+    <div class="mobile-nav-item active" id="mnav-routine" onclick="switchView('routine',document.getElementById('nav-routine'));updateMobileNav('routine')"><span class="mn-icon">⚡</span>Routine</div>
+    <div class="mobile-nav-item" id="mnav-quest" onclick="switchView('quest',document.getElementById('nav-quest'));updateMobileNav('quest')"><span class="mn-icon">🎯</span>Quests</div>
+    <div class="mobile-nav-item" id="mnav-plan" onclick="switchView('plan',document.getElementById('nav-plan'));updateMobileNav('plan')"><span class="mn-icon">📋</span>แผน</div>
+    <div class="mobile-nav-item" id="mnav-stats" onclick="switchView('stats',document.getElementById('nav-stats'));updateMobileNav('stats')"><span class="mn-icon">📊</span>สถิติ</div>
+    <div class="mobile-nav-item" id="mnav-journal" onclick="switchView('journal',document.getElementById('nav-journal'));updateMobileNav('journal')"><span class="mn-icon">📝</span>บันทึก</div>
+  </div>
+</nav>
+
+<!-- Level Up -->
+<div class="levelup-overlay" id="levelupOverlay">
+  <div class="levelup-card">
+    <span class="levelup-icon" id="levelupIcon">⭐</span>
+    <div class="levelup-title" id="levelupTitle">LEVEL UP!</div>
+    <div class="levelup-sub" id="levelupSub">คุณขึ้นระดับใหม่แล้ว!</div>
+    <div class="levelup-name" id="levelupName">DISCIPLINED</div>
+    <button class="levelup-btn" onclick="closeLevelUp()">🔥 ไปต่อ!</button>
+  </div>
+</div>
+
+<!-- Badge Unlock -->
+<div class="badge-unlock-overlay" id="badgeUnlockOverlay">
+  <div class="badge-unlock-icon" id="badgeUnlockIcon">🏆</div>
+  <div class="badge-unlock-info">
+    <div class="badge-unlock-label">🔓 Badge ปลดล็อค!</div>
+    <div class="badge-unlock-name" id="badgeUnlockName">Achievement</div>
+  </div>
+</div>
+
+<!-- Add/Edit Routine Block Modal -->
+<div class="modal-overlay" id="blockModal">
+  <div class="modal-card">
+    <div class="modal-title"><span id="blockModalIcon">➕</span> <span id="blockModalTitle">เพิ่ม Block ใหม่</span></div>
+    <input type="hidden" id="editBlockId">
+    <div class="form-group"><label class="form-label">ชื่อ Block</label><input class="form-input" id="blockTitleInput" placeholder="เช่น ออกกำลังกาย, อ่านหนังสือ..."></div>
+    <div class="form-group"><label class="form-label">เวลา</label><input class="form-input" id="blockTimeInput" placeholder="เช่น 06:00–07:00"></div>
+    <div class="form-group"><label class="form-label">ความยาก</label>
+      <select class="form-select" id="blockDifficulty">
+        <option value="🔥">🔥 ง่าย (10 XP)</option>
+        <option value="🔥🔥" selected>🔥🔥 ปานกลาง (20 XP)</option>
+        <option value="🔥🔥🔥">🔥🔥🔥 ยาก (30 XP)</option>
+        <option value="🔥🔥🔥🔥">🔥🔥🔥🔥 ยากมาก (40 XP)</option>
+        <option value="🔥🔥🔥🔥🔥">🔥🔥🔥🔥🔥 สุดๆ (50 XP)</option>
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">Quote (ไม่บังคับ)</label><input class="form-input" id="blockQuoteInput" placeholder="ประโยคสร้างแรงบันดาลใจ..."></div>
+    <div class="form-group"><label class="form-label">Tasks ในบล็อคนี้</label><div class="task-inputs" id="taskInputs"></div><button class="add-task-input-btn" onclick="addTaskInput()">+ เพิ่ม Task</button></div>
+    <div class="modal-footer">
+      <button class="modal-cancel-btn" onclick="closeBlockModal()">ยกเลิก</button>
+      <button class="modal-save-btn" onclick="saveBlock()">💾 บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- Quest Modal -->
+<div class="modal-overlay" id="questModal">
+  <div class="modal-card">
+    <div class="modal-title"><span id="questModalIcon">🎯</span> <span id="questModalTitleText">สร้าง Quest</span></div>
+    <input type="hidden" id="editQuestId">
+    <div class="form-group">
+      <label class="form-label">วันที่ทำ Quest</label>
+      <div class="quest-date-display" id="questModalDateDisplay"></div>
+      <input type="date" class="form-input" id="questDateInput" style="margin-top:6px">
+    </div>
+    <div class="form-group">
+      <label class="form-label">ไอคอน Quest</label>
+      <div class="icon-picker-grid" id="iconPickerGrid"></div>
+    </div>
+    <div class="form-group"><label class="form-label">ชื่อ Quest</label><input class="form-input" id="questTitleInput" placeholder="เช่น วิ่ง 10km, อ่าน 50 หน้า, ไม่กินน้ำตาล..."></div>
+    <div class="form-group"><label class="form-label">คำอธิบาย (ไม่บังคับ)</label><input class="form-input" id="questDescInput" placeholder="รายละเอียดเพิ่มเติม..."></div>
+    <div class="form-group">
+      <label class="form-label">Tasks ย่อย (ไม่บังคับ)</label>
+      <div class="task-inputs" id="questTaskInputs"></div>
+      <button class="add-task-input-btn" onclick="addQuestTaskInput()">+ เพิ่ม Task ย่อย</button>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-cancel-btn" onclick="closeQuestModal()">ยกเลิก</button>
+      <button class="modal-save-quest-btn" onclick="saveQuest()">✨ บันทึก Quest</button>
+    </div>
+  </div>
+</div>
+
+<!-- Profile Modal -->
+<div class="modal-overlay" id="profileModal">
+  <div class="modal-card">
+    <div class="modal-title">👤 แก้ไขโปรไฟล์</div>
+    <div class="avatar-upload-area" onclick="document.getElementById('avatarFileInput').click()">
+      <img class="avatar-preview-lg" id="avatarPreviewLg" src="data:image/svg+xml,%3Csvg viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='80' height='80' fill='%23202035'/%3E%3Ccircle cx='40' cy='30' r='16' fill='%23444466'/%3E%3Cellipse cx='40' cy='70' rx='24' ry='18' fill='%23444466'/%3E%3C/svg%3E">
+      <input type="file" id="avatarFileInput" accept="image/*" style="display:none" onchange="handleAvatarUpload(this)">
+      <div class="avatar-hint">📷 แตะเพื่อเปลี่ยนรูปโปรไฟล์</div>
+    </div>
+    <div class="form-group"><label class="form-label">ชื่อของคุณ</label><input class="form-input" id="profileNameInput" placeholder="ใส่ชื่อ..." maxlength="30"></div>
+    <div class="form-group"><label class="form-label">คติประจำใจ</label><input class="form-input" id="profileMottoInput" placeholder="Stay Disciplined..." maxlength="50"></div>
+    <div class="modal-footer">
+      <button class="modal-cancel-btn" onclick="closeProfileModal()">ยกเลิก</button>
+      <button class="modal-save-btn" onclick="saveProfile()">💾 บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════
+// LEVEL SYSTEM
+// ══════════════════════════════════════════
+const LEVEL_DATA=[
+  {lv:1,name:'Beginner',icon:'🌱',xp:0},{lv:2,name:'Apprentice',icon:'🔰',xp:1000},
+  {lv:3,name:'Seeker',icon:'🔍',xp:2000},{lv:4,name:'Practitioner',icon:'⚙️',xp:3000},
+  {lv:5,name:'Committed',icon:'💪',xp:4000},{lv:6,name:'Disciplined',icon:'🎯',xp:5000},
+  {lv:7,name:'Focused',icon:'🔥',xp:6000},{lv:8,name:'Consistent',icon:'⚡',xp:7000},
+  {lv:9,name:'Advanced',icon:'🚀',xp:8000},{lv:10,name:'Expert',icon:'💎',xp:9000},
+  {lv:11,name:'Elite',icon:'🏆',xp:10000},{lv:12,name:'Champion',icon:'👑',xp:11000},
+  {lv:13,name:'Master',icon:'🌟',xp:12000},{lv:14,name:'Grandmaster',icon:'⭐',xp:13000},
+  {lv:15,name:'Legend',icon:'🦁',xp:14000},{lv:16,name:'Mythic',icon:'🐉',xp:15000},
+  {lv:17,name:'Transcendent',icon:'✨',xp:16000},{lv:18,name:'Immortal',icon:'♾️',xp:17000},
+  {lv:19,name:'Godlike',icon:'🌌',xp:18000},{lv:20,name:'Discipline God',icon:'🔱',xp:19000},
+];
+const MAX_LEVEL=20;
+const XP_PER_LEVEL=1000;
+function getLevelFromXP(xp){let lv=1;for(let i=LEVEL_DATA.length-1;i>=0;i--){if(xp>=LEVEL_DATA[i].xp){lv=LEVEL_DATA[i].lv;break;}}return Math.min(lv,MAX_LEVEL)}
+function getLevelData(lv){return LEVEL_DATA[Math.min(lv,MAX_LEVEL)-1]||LEVEL_DATA[0]}
+function getXPForLevel(lv){return getLevelData(lv).xp}
+function getXPForNextLevel(lv){return lv>=MAX_LEVEL?getLevelData(MAX_LEVEL).xp+XP_PER_LEVEL:getLevelData(lv+1).xp}
+function getLevelPct(xp){const lv=getLevelFromXP(xp);if(lv>=MAX_LEVEL)return 100;const cur=getXPForLevel(lv);const nxt=getXPForNextLevel(lv);return Math.round(((xp-cur)/(nxt-cur))*100)}
+
+// ══════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════
+let currentUser=null; // {username, dataKey}
+
+function getUsers(){try{return JSON.parse(localStorage.getItem('__users__')||'[]')}catch{return[]}}
+function saveUsers(u){localStorage.setItem('__users__',JSON.stringify(u))}
+function getSession(){try{return JSON.parse(localStorage.getItem('__session__')||'null')}catch{return null}}
+function saveSession(s){localStorage.setItem('__session__',JSON.stringify(s))}
+function clearSession(){localStorage.removeItem('__session__')}
+
+function switchAuthTab(tab){
+  document.getElementById('loginForm').style.display=tab==='login'?'flex':'none';
+  document.getElementById('registerForm').style.display=tab==='register'?'flex':'none';
+  document.getElementById('tabLogin').classList.toggle('active',tab==='login');
+  document.getElementById('tabRegister').classList.toggle('active',tab==='register');
+}
+
+function doRegister(){
+  const name=document.getElementById('regName').value.trim();
+  const username=document.getElementById('regUsername').value.trim().toLowerCase();
+  const pw=document.getElementById('regPassword').value;
+  const pw2=document.getElementById('regPassword2').value;
+  const errEl=document.getElementById('registerError');
+  errEl.classList.remove('show');
+  if(!name){errEl.textContent='กรุณาใส่ชื่อ';errEl.classList.add('show');return}
+  if(!username||username.length<2){errEl.textContent='ชื่อผู้ใช้ต้องอย่างน้อย 2 ตัวอักษร';errEl.classList.add('show');return}
+  if(!/^[a-z0-9_]+$/.test(username)){errEl.textContent='ชื่อผู้ใช้ใช้ได้แค่ a-z, 0-9, _';errEl.classList.add('show');return}
+  if(pw.length<4){errEl.textContent='รหัสผ่านต้องอย่างน้อย 4 ตัว';errEl.classList.add('show');return}
+  if(pw!==pw2){errEl.textContent='รหัสผ่านไม่ตรงกัน';errEl.classList.add('show');return}
+  const users=getUsers();
+  if(users.find(u=>u.username===username)){errEl.textContent='ชื่อผู้ใช้นี้ถูกใช้แล้ว';errEl.classList.add('show');return}
+  // simple hash (not secure — client-side only)
+  const pwHash=simpleHash(pw);
+  const dataKey='user_'+username;
+  const newUser={username,pwHash,name,dataKey,createdAt:Date.now()};
+  users.push(newUser);
+  saveUsers(users);
+  // set default profile
+  const profKey=dataKey+'_profile';
+  localStorage.setItem(profKey,JSON.stringify({name,motto:'Stay Disciplined',avatar:''}));
+  loginUser(newUser);
+}
+
+function doLogin(){
+  const username=document.getElementById('loginUsername').value.trim().toLowerCase();
+  const pw=document.getElementById('loginPassword').value;
+  const errEl=document.getElementById('loginError');
+  errEl.classList.remove('show');
+  if(!username||!pw){errEl.textContent='กรุณาใส่ชื่อผู้ใช้และรหัสผ่าน';errEl.classList.add('show');return}
+  const users=getUsers();
+  const user=users.find(u=>u.username===username);
+  if(!user||user.pwHash!==simpleHash(pw)){errEl.textContent='ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';errEl.classList.add('show');return}
+  loginUser(user);
+}
+
+function loginAsGuest(){
+  const guest={username:'guest',name:'Guest User',dataKey:'user_guest',isGuest:true};
+  loginUser(guest);
+}
+
+function loginUser(user){
+  currentUser=user;
+  saveSession({username:user.username,dataKey:user.dataKey,isGuest:user.isGuest||false});
+  document.getElementById('authScreen').classList.add('hidden');
+  init();
+}
+
+function doLogout(){
+  if(!confirm('ออกจากระบบ?')) return;
+  clearSession();
+  currentUser=null;
+  location.reload();
+}
+
+function simpleHash(str){
+  let h=0;
+  for(let i=0;i<str.length;i++){h=((h<<5)-h+str.charCodeAt(i))|0}
+  return h.toString(36);
+}
+
+function checkExistingSession(){
+  const sess=getSession();
+  if(!sess) return false;
+  const users=getUsers();
+  if(sess.isGuest){
+    currentUser={username:'guest',name:'Guest User',dataKey:'user_guest',isGuest:true};
+    return true;
+  }
+  const user=users.find(u=>u.username===sess.username);
+  if(!user) return false;
+  currentUser=user;
+  return true;
+}
+
+function renderSavedUsers(){
+  const users=getUsers();
+  if(users.length===0) return;
+  const sec=document.getElementById('savedUsersSection');
+  const list=document.getElementById('savedUsersList');
+  sec.style.display='flex'; list.style.display='flex';
+  list.innerHTML='';
+  users.forEach(u=>{
+    const chip=document.createElement('div'); chip.className='user-chip';
+    const profKey=u.dataKey+'_profile';
+    const prof=JSON.parse(localStorage.getItem(profKey)||'{}');
+    chip.innerHTML=`<img class="user-chip-avatar" src="${prof.avatar||"data:image/svg+xml,%3Csvg viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='28' height='28' fill='%23202035'/%3E%3Ccircle cx='14' cy='10' r='6' fill='%23444466'/%3E%3Cellipse cx='14' cy='26' rx='10' ry='8' fill='%23444466'/%3E%3C/svg%3E"}">
+      <span style="flex:1">${u.name||u.username}</span><span style="font-family:'Space Mono',monospace;font-size:10px;color:var(--text3)">@${u.username}</span>
+      <span style="font-size:12px;color:var(--accent)">→</span>`;
+    chip.onclick=()=>{
+      document.getElementById('loginUsername').value=u.username;
+      document.getElementById('loginPassword').focus();
+      switchAuthTab('login');
+    };
+    list.appendChild(chip);
+  });
+}
+
+// ══════════════════════════════════════════
+// STORAGE (per-user)
+// ══════════════════════════════════════════
+function uKey(k){return (currentUser?currentUser.dataKey:'user_guest')+'_'+k}
+const S={
+  get:k=>{try{return JSON.parse(localStorage.getItem(uKey(k))||'null')}catch{return null}},
+  set:(k,v)=>localStorage.setItem(uKey(k),JSON.stringify(v)),
+  keys:()=>{const prefix=uKey('');const res=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(prefix))res.push(k.slice(prefix.length))}return res}
+};
+function getBlocks(){return S.get('custom_blocks')||DEFAULT_BLOCKS}
+function saveBlocks(b){S.set('custom_blocks',b)}
+function getChecks(d){return S.get('checks_'+d)||{}}
+function setChecks(d,c){S.set('checks_'+d,c)}
+function getJournal(d){return S.get('journal_'+d)||{goals:'',gratitude:'',learned:'',reflection:''}}
+function setJournal(d,v){S.set('journal_'+d,v)}
+function getMood(d){return S.get('mood_'+d)||''}
+function setMood(d,m){S.set('mood_'+d,m)}
+function getProfile(){return S.get('profile')||{name:currentUser?.name||'ชื่อของคุณ',motto:'Stay Disciplined',avatar:''}}
+function saveProfileData(p){S.set('profile',p)}
+// QUESTS
+function getQuests(d){return S.get('quests_'+d)||[]}
+function setQuests(d,q){S.set('quests_'+d,q)}
+function getQuestChecks(d,qid){return S.get('qchecks_'+d+'_'+qid)||[]}
+function setQuestChecks(d,qid,arr){S.set('qchecks_'+d+'_'+qid,arr)}
+
+// ══════════════════════════════════════════
+// DEFAULT BLOCKS
+// ══════════════════════════════════════════
+const DEFAULT_BLOCKS=[
+  {id:'wake',time:'04:30–05:00',title:'ตื่น + ไม่กดเลื่อน',difficulty:'🔥🔥🔥',
+   quote:'การตื่นเช้าคือชัยชนะครั้งแรกของวัน',
+   tasks:[{t:'วางโทรศัพท์ไว้อีกห้อง',xp:8},{t:'ดื่มน้ำ 500ml ทันที',xp:4},{t:'เปิดไฟ/ม่าน ให้แสงเข้า',xp:3}]},
+  {id:'exercise',time:'05:00–06:00',title:'ออกกำลังกาย',difficulty:'🔥🔥🔥🔥',
+   quote:'Exercise = ยาที่ดีที่สุดสำหรับสมอง',
+   tasks:[{t:'วอร์มอัพ 5 นาที',xp:5},{t:'ออกกำลังกาย 40–50 นาที',xp:15},{t:'Cool down + stretch',xp:5}]},
+  {id:'mindset',time:'06:00–06:30',title:'Mindset Morning',difficulty:'🔥🔥',
+   quote:'30 นาทีนี้โปรแกรม subconscious ก่อนโลกมาดึงความสนใจ',
+   tasks:[{t:'Meditation 10 นาที',xp:8},{t:'เขียน gratitude 3 ข้อ',xp:6},{t:'อ่านหนังสือ 15 นาที',xp:4}]},
+];
+const DIFF_XP={'🔥':10,'🔥🔥':20,'🔥🔥🔥':30,'🔥🔥🔥🔥':40,'🔥🔥🔥🔥🔥':50};
+const QUEST_ICONS=['🎯','🏃','📚','🧘','💪','🎨','🛠️','🎵','🌿','🔬','✍️','🎸','🏊','🚴','🥗','💻','📖','🎭','🌅','⚽','🎾','🧗','🎲','🌍','🍳','🧹','💡','🏆','🎤','🌟','🦁','🐉','⚡','🔥','💎','👑','🚀','✨','🌊','🎪'];
+const QUEST_XP=50; // per completed quest
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+const today=new Date(); today.setHours(0,0,0,0);
+let currentRoutineDate=dateKey(today);
+let currentJournalDate=dateKey(today);
+let currentQuestDate=dateKey(today);
+let planSelectedDate=dateKey(today);
+let calViewMonth=today.getMonth(),calViewYear=today.getFullYear();
+let miniCalMonth=today.getMonth(),miniCalYear=today.getFullYear();
+let insightIdx=0, prevLevel=1, prevEarnedBadgeIds=new Set(), editingBlockId=null, editingQuestId=null, selectedQuestIcon='🎯';
+
+// ══════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════
+function dateKey(d){return d.toISOString().split('T')[0]}
+function parseDate(k){const[y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d)}
+function formatDateTH(d){const M=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];return`${d.getDate()} ${M[d.getMonth()]} ${d.getFullYear()+543}`}
+function formatDateTHFull(d){const DAYS=['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];return`วัน${DAYS[d.getDay()]} ${formatDateTH(d)}`}
+function blockXP(b){return DIFF_XP[b.difficulty]||b.tasks.reduce((s,t)=>s+t.xp,0)||10}
+function calcDateXP(dateStr){const checks=getChecks(dateStr);let xp=0;getBlocks().forEach(b=>{b.tasks.forEach((t,i)=>{if((checks[b.id]||[])[i])xp+=t.xp})});return xp}
+function calcProgress(dateStr){const checks=getChecks(dateStr);let total=0,done=0;getBlocks().forEach(b=>{total+=b.tasks.length;(checks[b.id]||[]).forEach(v=>{if(v)done++})});return total===0?0:Math.round((done/total)*100)}
+function calcQuestXP(dateStr){const quests=getQuests(dateStr);let xp=0;quests.forEach(q=>{const qc=getQuestChecks(dateStr,q.id);const allDone=q.tasks.length===0||qc.every(Boolean);if(allDone&&qc.length>0||q.tasks.length===0&&getQuestChecks(dateStr,q.id+'_done')[0])xp+=QUEST_XP});return xp}
+function isQuestDone(dateStr,q){
+  if(q.tasks.length===0){return !!(getQuestChecks(dateStr,q.id+'_done')[0])}
+  const qc=getQuestChecks(dateStr,q.id);
+  return qc.length>0&&qc.every(Boolean)&&qc.length===q.tasks.length;
+}
+function totalQuestsDone(){
+  let count=0;
+  S.keys().filter(k=>k.startsWith('quests_')).forEach(k=>{
+    const d=k.replace('quests_','');const quests=getQuests(d);
+    quests.forEach(q=>{if(isQuestDone(d,q))count++});
+  });
+  return count;
+}
+
+function aggregateStats(){
+  const allDateKeys=S.keys().filter(k=>k.startsWith('checks_')).map(k=>k.replace('checks_',''));
+  const pcts=allDateKeys.map(k=>calcProgress(k)).filter(p=>p>0);
+  const totalDays=allDateKeys.filter(k=>calcProgress(k)>0).length;
+  const avgPct=pcts.length>0?Math.round(pcts.reduce((a,b)=>a+b,0)/pcts.length):0;
+  const perfectDays=pcts.filter(p=>p===100).length;
+  let totalXP=0;allDateKeys.forEach(k=>{totalXP+=calcDateXP(k)});
+  // add quest XP
+  S.keys().filter(k=>k.startsWith('quests_')).forEach(k=>{totalXP+=calcQuestXP(k.replace('quests_',''))});
+  let totalTasks=0;allDateKeys.forEach(k=>{const c=getChecks(k);Object.values(c).forEach(arr=>{if(Array.isArray(arr))arr.forEach(v=>{if(v)totalTasks++})})});
+  let streak=0;let d=new Date(today);while(true){const k=dateKey(d);if(calcProgress(k)>=50){streak++;d.setDate(d.getDate()-1)}else break;}
+  let journalDays=0;S.keys().filter(k=>k.startsWith('journal_')).forEach(k=>{const j=S.get(k);if(j&&(j.reflection||'').length>10)journalDays++});
+  const level=getLevelFromXP(totalXP);
+  const questsDone=totalQuestsDone();
+  return{totalDays,avgPct,perfectDays,totalXP,totalTasks,streak,journalDays,level,pcts,questsDone};
+}
+
+// ══════════════════════════════════════════
+// BADGES
+// ══════════════════════════════════════════
+const ALL_BADGE_CATEGORIES=[
+  {cat:'🔥 Streak',badges:[
+    {id:'streak1',icon:'🌱',name:'First Step',desc:'ทำ routine วันแรก',check:s=>s.streak>=1},
+    {id:'streak3',icon:'🔥',name:'On Fire',desc:'Streak 3 วัน',check:s=>s.streak>=3},
+    {id:'streak7',icon:'⚡',name:'Week Warrior',desc:'Streak 7 วัน',check:s=>s.streak>=7},
+    {id:'streak14',icon:'💎',name:'Fortnight',desc:'Streak 14 วัน',check:s=>s.streak>=14},
+    {id:'streak30',icon:'🏆',name:'Iron Will',desc:'Streak 30 วัน',check:s=>s.streak>=30},
+    {id:'streak100',icon:'🔱',name:'Century',desc:'Streak 100 วัน',check:s=>s.streak>=100},
+  ]},
+  {cat:'⭐ Level Up',badges:[
+    {id:'lv2',icon:'🔰',name:'Apprentice',desc:'ขึ้น Level 2',check:s=>s.level>=2},
+    {id:'lv5',icon:'💪',name:'Committed',desc:'ขึ้น Level 5',check:s=>s.level>=5},
+    {id:'lv10',icon:'💎',name:'Expert',desc:'ขึ้น Level 10',check:s=>s.level>=10},
+    {id:'lv20',icon:'🔱',name:'Discipline God',desc:'Level 20 MAX!',check:s=>s.level>=20},
+  ]},
+  {cat:'🎯 Quest Master',badges:[
+    {id:'quest1',icon:'🎯',name:'Questor',desc:'ทำ Quest แรก',check:s=>s.questsDone>=1},
+    {id:'quest5',icon:'⚔️',name:'Adventurer',desc:'ทำ Quest 5 ครั้ง',check:s=>s.questsDone>=5},
+    {id:'quest20',icon:'🏅',name:'Hero',desc:'ทำ Quest 20 ครั้ง',check:s=>s.questsDone>=20},
+    {id:'quest50',icon:'👑',name:'Quest King',desc:'ทำ Quest 50 ครั้ง',check:s=>s.questsDone>=50},
+  ]},
+  {cat:'🏆 Perfect Days',badges:[
+    {id:'perf1',icon:'⭐',name:'Perfect Day',desc:'ทำ 100% ครั้งแรก',check:s=>s.perfectDays>=1},
+    {id:'perf5',icon:'🌟',name:'5-Star',desc:'ทำ 100% ได้ 5 วัน',check:s=>s.perfectDays>=5},
+    {id:'perf10',icon:'💫',name:'Perfect 10',desc:'ทำ 100% ได้ 10 วัน',check:s=>s.perfectDays>=10},
+  ]},
+  {cat:'📝 Journal',badges:[
+    {id:'journal1',icon:'📔',name:'First Entry',desc:'เขียน journal ครั้งแรก',check:s=>s.journalDays>=1},
+    {id:'journal7',icon:'📝',name:'Journaler',desc:'เขียน journal 7 วัน',check:s=>s.journalDays>=7},
+  ]},
+  {cat:'🛠️ Builder',badges:[
+    {id:'custom_builder',icon:'🛠️',name:'Custom Builder',desc:'เพิ่ม Block ของตัวเอง',check:()=>!!S.get('custom_blocks')},
+    {id:'theme_changer',icon:'🎨',name:'Theme Master',desc:'เปลี่ยน theme แล้ว',check:()=>!!S.get('theme')&&S.get('theme')!=='default'},
+    {id:'profile_set',icon:'🪪',name:'Identity Set',desc:'ตั้งชื่อโปรไฟล์แล้ว',check:()=>{const p=S.get('profile');return p&&p.name&&p.name!=='ชื่อของคุณ'&&p.name!=='Guest User'}},
+  ]},
+];
+const ALL_BADGES=ALL_BADGE_CATEGORIES.flatMap(c=>c.badges);
+
+// ══════════════════════════════════════════
+// THEME
+// ══════════════════════════════════════════
+function applyTheme(name){
+  document.body.className=name==='default'?'':'theme-'+name;
+  S.set('theme',name);
+  document.querySelectorAll('.theme-dot').forEach(d=>d.classList.remove('active'));
+  const el=document.getElementById('td-'+name);if(el)el.classList.add('active');
+  showToast('🎨 ธีม: '+name);
+}
+function loadTheme(){applyTheme(S.get('theme')||'default')}
+
+// ══════════════════════════════════════════
+// PROFILE
+// ══════════════════════════════════════════
+function openProfileModal(){
+  const p=getProfile();
+  document.getElementById('profileNameInput').value=p.name||'';
+  document.getElementById('profileMottoInput').value=p.motto||'';
+  if(p.avatar)document.getElementById('avatarPreviewLg').src=p.avatar;
+  document.getElementById('profileModal').classList.add('show');
+}
+function closeProfileModal(){document.getElementById('profileModal').classList.remove('show')}
+function handleAvatarUpload(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{const src=e.target.result;document.getElementById('avatarPreviewLg').src=src;const p=getProfile();p.avatar=src;saveProfileData(p);};
+  reader.readAsDataURL(file);
+}
+function saveProfile(){
+  const name=document.getElementById('profileNameInput').value.trim()||'ชื่อของคุณ';
+  const motto=document.getElementById('profileMottoInput').value.trim();
+  const p=getProfile();p.name=name;p.motto=motto;saveProfileData(p);
+  updateProfileUI();closeProfileModal();showToast('👤 บันทึกโปรไฟล์แล้ว');checkNewBadges();
+}
+function updateProfileUI(){
+  const p=getProfile();const s=aggregateStats();const ld=getLevelData(s.level);
+  document.getElementById('sidebarProfileName').textContent=p.name;
+  document.getElementById('sidebarProfileTitle').textContent=`${ld.icon} ${ld.name}`;
+  const def="data:image/svg+xml,%3Csvg viewBox='0 0 52 52' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='52' height='52' fill='%23202035'/%3E%3Ccircle cx='26' cy='20' r='10' fill='%23444466'/%3E%3Cellipse cx='26' cy='46' rx='16' ry='12' fill='%23444466'/%3E%3C/svg%3E";
+  document.getElementById('sidebarAvatar').src=p.avatar||def;
+}
+
+// ══════════════════════════════════════════
+// XP POP
+// ══════════════════════════════════════════
+function popXP(amount,x,y){
+  const el=document.createElement('div');el.className='xp-pop';el.textContent=`+${amount} XP`;
+  el.style.left=(x||window.innerWidth/2)+'px';el.style.top=(y||window.innerHeight/2)+'px';
+  document.body.appendChild(el);setTimeout(()=>el.remove(),1400);
+}
+
+// ══════════════════════════════════════════
+// XP UI
+// ══════════════════════════════════════════
+function updateXPUI(){
+  const s=aggregateStats();const lv=s.level;const ld=getLevelData(lv);
+  const pct=getLevelPct(s.totalXP);const cur=getXPForLevel(lv);const nxt=getXPForNextLevel(lv);const xpInLevel=s.totalXP-cur;const xpNeeded=nxt-cur;
+  document.getElementById('sidebarLevel').textContent=`${ld.icon} LVL ${lv}`;
+  document.getElementById('sidebarXP').textContent=`${s.totalXP.toLocaleString()} XP`;
+  document.getElementById('sidebarXPBar').style.width=pct+'%';
+  document.getElementById('sidebarIdentityPct').textContent=s.avgPct+'%';
+  document.getElementById('topbarLevel').textContent=`${ld.icon} LVL ${lv}`;
+  const circ=238.7;
+  document.getElementById('xpRingFill').style.strokeDashoffset=circ-(circ*pct/100);
+  document.getElementById('xpRingLevel').textContent=lv;
+  document.getElementById('levelBadgeNum').textContent=lv;
+  document.getElementById('levelNameBig').textContent=`${ld.icon} ${ld.name}`;
+  document.getElementById('levelXpText').textContent=`${s.totalXP.toLocaleString()} / ${nxt.toLocaleString()} XP`;
+  document.getElementById('levelBarFill').style.width=pct+'%';
+  if(lv>=MAX_LEVEL){document.getElementById('levelNext').textContent='🔱 MAX LEVEL!'}
+  else{const nextLd=getLevelData(lv+1);document.getElementById('levelNext').textContent=`อีก ${(xpNeeded-xpInLevel).toLocaleString()} XP → ${nextLd.icon} ${nextLd.name}`;}
+  if(prevLevel&&lv>prevLevel)triggerLevelUp(prevLevel,lv);
+  prevLevel=lv;
+  updateSidebarBadges(s);
+  const earned=ALL_BADGES.filter(b=>b.check(s));
+  document.getElementById('navBadgeCount').textContent=earned.length;
+  // quest badge count for today
+  const todayQ=getQuests(dateKey(today));
+  const doneQ=todayQ.filter(q=>isQuestDone(dateKey(today),q)).length;
+  document.getElementById('navQuestBadge').textContent=`${doneQ}/${todayQ.length}`;
+  updateProfileUI();checkNewBadges(s);
+}
+
+// ══════════════════════════════════════════
+// BADGES
+// ══════════════════════════════════════════
+function checkNewBadges(s){
+  if(!s)s=aggregateStats();
+  const nowEarned=new Set(ALL_BADGES.filter(b=>b.check(s)).map(b=>b.id));
+  for(const id of nowEarned){if(!prevEarnedBadgeIds.has(id)){const badge=ALL_BADGES.find(b=>b.id===id);if(badge)showBadgeUnlock(badge);}}
+  prevEarnedBadgeIds=nowEarned;
+}
+function showBadgeUnlock(badge){
+  const ov=document.getElementById('badgeUnlockOverlay');
+  document.getElementById('badgeUnlockIcon').textContent=badge.icon;
+  document.getElementById('badgeUnlockName').textContent=badge.name;
+  ov.classList.add('show');launchConfetti(20);setTimeout(()=>ov.classList.remove('show'),3500);
+}
+function updateSidebarBadges(s){
+  const grid=document.getElementById('sidebarBadgeGrid');grid.innerHTML='';
+  const earned=ALL_BADGES.filter(b=>b.check(s));
+  const show=earned.length>0?earned.slice(-8):ALL_BADGES.slice(0,8);
+  show.forEach(b=>{
+    const el=document.createElement('div');el.className='badge-chip'+(b.check(s)?'':' locked');
+    el.textContent=b.icon;el.title=b.name+': '+b.desc;grid.appendChild(el);
+  });
+}
+function renderBadges(){
+  const s=aggregateStats();
+  const earned=ALL_BADGES.filter(b=>b.check(s));
+  document.getElementById('badgeEarnedCount').textContent=earned.length;
+  document.getElementById('badgeTotalCount').textContent=ALL_BADGES.length;
+  const container=document.getElementById('allBadgesContainer');container.innerHTML='';
+  ALL_BADGE_CATEGORIES.forEach(cat=>{
+    const catTitle=document.createElement('div');catTitle.className='badge-category-title';catTitle.textContent=cat.cat;container.appendChild(catTitle);
+    const grid=document.createElement('div');grid.className='all-badges-grid';
+    cat.badges.forEach(b=>{
+      const isEarned=b.check(s);
+      const el=document.createElement('div');el.className='badge-card'+(isEarned?' earned':' locked');
+      el.innerHTML=`<div class="badge-card-icon">${b.icon}</div><div class="badge-card-name">${b.name}</div><div class="badge-card-desc">${isEarned?'✓ ได้รับแล้ว':b.desc}</div>`;
+      grid.appendChild(el);
+    });
+    container.appendChild(grid);
+  });
+}
+
+// ══════════════════════════════════════════
+// LEVEL UP
+// ══════════════════════════════════════════
+function triggerLevelUp(oldLv,newLv){
+  const ld=getLevelData(newLv);
+  document.getElementById('levelupIcon').textContent=ld.icon;
+  document.getElementById('levelupTitle').textContent=`LEVEL ${newLv}!`;
+  document.getElementById('levelupSub').textContent='คุณขึ้นระดับใหม่แล้ว!';
+  document.getElementById('levelupName').textContent=ld.name.toUpperCase();
+  document.getElementById('levelupOverlay').classList.add('show');launchConfetti(50);
+}
+function closeLevelUp(){document.getElementById('levelupOverlay').classList.remove('show')}
+
+// ══════════════════════════════════════════
+// INSIGHTS
+// ══════════════════════════════════════════
+const INSIGHTS_POOL=[
+  s=>s.streak>=3?`🔥 Streak ${s.streak} วัน! สร้างนิสัยที่แข็งแกร่ง`:null,
+  s=>s.avgPct<50?`⚠️ เฉลี่ย ${s.avgPct}% ยังต่ำ — โฟกัส 3 blocks แรกก่อน`:null,
+  s=>s.avgPct>=80?`🌟 เฉลี่ย ${s.avgPct}% — คุณอยู่ใน Top 1%`:null,
+  s=>s.totalXP>0?`⭐ ${s.totalXP.toLocaleString()} XP · อีก ${Math.max(0,getXPForNextLevel(s.level)-s.totalXP).toLocaleString()} XP → Level ${s.level+1}`:null,
+  s=>s.questsDone>0?`🎯 ทำ Quest สำเร็จแล้ว ${s.questsDone} ครั้ง — เยี่ยมมาก!`:null,
+  ()=>`📈 Compound effect: 1% ดีขึ้นทุกวัน = ดีขึ้น 37 เท่าในหนึ่งปี`,
+  ()=>`🔑 ความลับของความสำเร็จอยู่ใน routine ไม่ใช่แรงบันดาลใจ`,
+];
+function buildInsights(){const s=aggregateStats();return INSIGHTS_POOL.map(fn=>fn(s)).filter(Boolean)}
+function nextInsight(){const p=buildInsights();insightIdx=(insightIdx+1)%Math.max(p.length,1);document.getElementById('insightText').textContent=p[insightIdx]||'เริ่ม routine วันแรกเพื่อรับ insights'}
+function refreshInsight(){const p=buildInsights();document.getElementById('insightText').textContent=p[insightIdx%Math.max(p.length,1)]||'เริ่ม routine วันแรกเพื่อรับ insights'}
+
+// ══════════════════════════════════════════
+// WEEKLY TREND
+// ══════════════════════════════════════════
+function renderWeeklyTrend(){
+  const days=['อ','จ','อ','พ','พฤ','ศ','ส'];
+  const bars=document.getElementById('weekBars');bars.innerHTML='';
+  let pcts=[];
+  for(let i=6;i>=0;i--){const dt=new Date(today);dt.setDate(dt.getDate()-i);pcts.push(calcProgress(dateKey(dt)))}
+  const improving=pcts.slice(4).reduce((a,b)=>a+b,0)>pcts.slice(0,3).reduce((a,b)=>a+b,0);
+  const avg7=Math.round(pcts.reduce((a,b)=>a+b,0)/7);
+  document.getElementById('trendLabel').innerHTML=`${improving?'📈 กำลังดีขึ้น':'📉 ควรพยายามมากขึ้น'} · เฉลี่ย ${avg7}%`;
+  pcts.forEach((p,i)=>{
+    const dt=new Date(today);dt.setDate(dt.getDate()-(6-i));
+    const dayLabel=days[dt.getDay()];
+    const barClass=p>=80?'high':p>=50?'mid':p>0?'low':'empty';
+    const wrap=document.createElement('div');wrap.className='week-bar-wrap';
+    wrap.innerHTML=`<div class="week-pct">${p>0?p+'%':''}</div>
+      <div class="week-bar-outer"><div class="week-bar-fill ${barClass}" style="height:${Math.max(p,2)}%"></div></div>
+      <div class="week-day-label">${dayLabel}</div>`;
+    bars.appendChild(wrap);
+  });
+}
+
+// ══════════════════════════════════════════
+// DAILY QUESTS — CORE
+// ══════════════════════════════════════════
+function renderQuestMiniInRoutine(){
+  const dateStr=currentRoutineDate;
+  const quests=getQuests(dateStr);
+  const container=document.getElementById('routineQuestMini');
+  if(quests.length===0){container.innerHTML='';return;}
+  const doneCount=quests.filter(q=>isQuestDone(dateStr,q)).length;
+  container.innerHTML=`
+    <div class="quest-header-row">
+      <div class="quest-section-title">🎯 DAILY QUESTS <span style="color:var(--text3);margin-left:6px">${doneCount}/${quests.length}</span></div>
+      <button class="quest-add-btn" onclick="openQuestModalForDate('${dateStr}')">+ Quest</button>
+    </div>`;
+  quests.forEach(q=>{
+    const done=isQuestDone(dateStr,q);
+    const card=document.createElement('div');card.className='quest-card'+(done?' completed':'');
+    card.dataset.qid=q.id;
+    const qc=getQuestChecks(dateStr,q.id);
+    const tasksDone=q.tasks.length===0?0:qc.filter(Boolean).length;
+    card.innerHTML=`
+      <div class="quest-card-header" onclick="toggleQuestCard('${q.id}','mini')">
+        <div class="quest-card-icon">${q.icon}</div>
+        <div class="quest-card-info">
+          <div class="quest-card-title">${q.title}</div>
+          <div class="quest-card-meta">
+            <div class="quest-xp-badge">+${QUEST_XP} XP</div>
+            ${q.tasks.length>0?`<div class="quest-progress-text">${tasksDone}/${q.tasks.length}</div>`:''}
+            <div class="quest-done-badge">✓ สำเร็จ!</div>
+          </div>
+        </div>
+        <div class="quest-card-right">
+          ${q.tasks.length===0?`<div style="width:28px;height:28px;border-radius:50%;border:2px solid ${done?'var(--accent3)':'rgba(255,108,180,.3)'};display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:all .2s" onclick="event.stopPropagation();toggleSimpleQuest('${dateStr}','${q.id}')">${done?'✓':''}</div>`:''}
+          ${q.tasks.length>0?`<div class="quest-chevron">▾</div>`:''}
+        </div>
+      </div>
+      ${q.tasks.length>0?`<div class="quest-card-body" id="qbody_mini_${q.id}">
+        ${q.desc?`<div class="quest-desc">${q.desc}</div>`:''}
+        <div class="quest-task-list">${q.tasks.map((t,i)=>`
+          <div class="quest-task-item${(qc[i]?true:false)?' checked':''}" onclick="toggleQuestTask('${dateStr}','${q.id}',${i},event,'mini')">
+            <div class="quest-custom-check"><span class="quest-check-mark">✓</span></div>
+            <div class="quest-task-text">${t.t}</div>
+            <div class="quest-task-xp">+${t.xp||5}xp</div>
+          </div>`).join('')}
+        </div>
+      </div>`:''}`;
+    container.appendChild(card);
+  });
+  container.insertAdjacentHTML('beforeend',`<div style="text-align:right;margin-top:6px;margin-bottom:4px"><button class="quest-add-btn" onclick="openQuestModalForDate('${dateStr}')">+ เพิ่ม Quest</button></div>`);
+}
+
+function renderQuestView(){
+  const dateStr=currentQuestDate;
+  const d=parseDate(dateStr);
+  const isToday=dateStr===dateKey(today);
+  const isFuture=d>today;
+  document.getElementById('questViewDateLabel').textContent=formatDateTHFull(d)+(isToday?' (วันนี้)':isFuture?' (ยังไม่ถึง)':'');
+  document.getElementById('questDateLabel2').textContent=formatDateTH(d);
+  const quests=getQuests(dateStr);
+  const container=document.getElementById('questList');container.innerHTML='';
+  if(quests.length===0){
+    container.innerHTML=`<div class="quest-empty"><div class="quest-empty-icon">🎯</div><div>ยังไม่มี Quest วันนี้</div><div style="font-size:11px;margin-top:6px;font-family:'Space Mono',monospace;color:var(--text3)">สร้าง Quest เฉพาะวันนี้ที่แตกต่างจาก routine ปกติ</div></div>`;
+  } else {
+    const doneCount=quests.filter(q=>isQuestDone(dateStr,q)).length;
+    container.insertAdjacentHTML('beforebegin',`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div style="font-size:12px;color:var(--text3);font-family:'Space Mono',monospace">${doneCount}/${quests.length} COMPLETED · +${doneCount*QUEST_XP} XP</div></div>`);
+    quests.forEach(q=>{
+      const done=isQuestDone(dateStr,q);
+      const qc=getQuestChecks(dateStr,q.id);
+      const tasksDone=qc.filter(Boolean).length;
+      const card=document.createElement('div');card.className='quest-card'+(done?' completed':'');
+      card.innerHTML=`
+        <div class="quest-card-header" onclick="toggleQuestCard('${q.id}','full')">
+          <div class="quest-card-icon">${q.icon}</div>
+          <div class="quest-card-info">
+            <div class="quest-card-title">${q.title}</div>
+            <div class="quest-card-meta">
+              <div class="quest-xp-badge">+${QUEST_XP} XP</div>
+              ${q.tasks.length>0?`<div class="quest-progress-text">${tasksDone}/${q.tasks.length} tasks</div>`:''}
+              <div class="quest-done-badge">✓ สำเร็จ!</div>
+            </div>
+          </div>
+          <div class="quest-card-right">
+            ${q.tasks.length===0?`<div style="width:32px;height:32px;border-radius:50%;border:2px solid ${done?'var(--accent3)':'rgba(255,108,180,.4)'};display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;background:${done?'var(--accent3)':'transparent'};transition:all .2s" onclick="event.stopPropagation();toggleSimpleQuest('${dateStr}','${q.id}')">${done?'✓':''}</div>`:''}
+            ${q.tasks.length>0?`<div class="quest-chevron">▾</div>`:''}
+          </div>
+        </div>
+        <div class="quest-card-body" id="qbody_full_${q.id}">
+          ${q.desc?`<div class="quest-desc">${q.desc}</div>`:''}
+          ${q.tasks.length>0?`<div class="quest-task-list">${q.tasks.map((t,i)=>`
+            <div class="quest-task-item${qc[i]?' checked':''}" onclick="toggleQuestTask('${dateStr}','${q.id}',${i},event,'full')">
+              <div class="quest-custom-check"><span class="quest-check-mark">✓</span></div>
+              <div class="quest-task-text">${t.t}</div>
+              <div class="quest-task-xp">+${t.xp||5}xp</div>
+            </div>`).join('')}</div>`:''}
+          <div class="quest-card-actions">
+            <button class="quest-edit-btn" onclick="event.stopPropagation();openEditQuestModal('${dateStr}','${q.id}')">✏️ แก้ไข</button>
+            <button class="quest-del-btn" onclick="event.stopPropagation();deleteQuest('${dateStr}','${q.id}')">🗑️ ลบ</button>
+          </div>
+        </div>`;
+      container.appendChild(card);
+    });
+  }
+}
+
+function toggleQuestCard(qid,scope){
+  const body=document.getElementById(`qbody_${scope}_${qid}`);
+  if(!body)return;
+  const card=body.closest('.quest-card');
+  if(card)card.classList.toggle('open');
+}
+
+function toggleSimpleQuest(dateStr,qid){
+  const quests=getQuests(dateStr);const q=quests.find(x=>x.id===qid);if(!q)return;
+  const doneKey=qid+'_done';
+  const cur=getQuestChecks(dateStr,doneKey);
+  const wasDone=!!cur[0];
+  setQuestChecks(dateStr,doneKey,[!wasDone]);
+  if(!wasDone){
+    popXP(QUEST_XP);launchConfetti(15);showToast(`🎯 Quest "${q.title}" สำเร็จ! +${QUEST_XP} XP`);
+  } else showToast('↩ ยกเลิก');
+  renderRoutine();renderQuestView();updateXPUI();
+}
+
+function toggleQuestTask(dateStr,qid,idx,evt,scope){
+  const quests=getQuests(dateStr);const q=quests.find(x=>x.id===qid);if(!q)return;
+  const qc=getQuestChecks(dateStr,qid);
+  while(qc.length<q.tasks.length)qc.push(false);
+  const was=qc[idx];qc[idx]=!was;
+  setQuestChecks(dateStr,qid,qc);
+  const xp=q.tasks[idx]?.xp||5;
+  if(!was){
+    const rect=evt?.target?.getBoundingClientRect?.();
+    popXP(xp,rect?rect.left+rect.width/2:undefined,rect?rect.top:undefined);
+    if(qc.every(Boolean)){launchConfetti(18);showToast(`🎯 Quest "${q.title}" สำเร็จ! +${QUEST_XP} XP`);}
+    else showToast(`✓ +${xp} XP`);
+  } else showToast('↩ ยกเลิก');
+  renderRoutine();renderQuestView();updateXPUI();
+}
+
+// ══════════════════════════════════════════
+// QUEST MODAL
+// ══════════════════════════════════════════
+const ICON_PICKER_ICONS=QUEST_ICONS;
+function renderIconPicker(){
+  const grid=document.getElementById('iconPickerGrid');grid.innerHTML='';
+  ICON_PICKER_ICONS.forEach(ico=>{
+    const el=document.createElement('div');el.className='icon-option'+(ico===selectedQuestIcon?' selected':'');
+    el.textContent=ico;el.onclick=()=>{selectedQuestIcon=ico;renderIconPicker();};
+    grid.appendChild(el);
+  });
+}
+
+function openQuestModal(){openQuestModalForDate(currentQuestDate)}
+function openQuestModalForDate(dateStr){
+  editingQuestId=null;selectedQuestIcon='🎯';
+  document.getElementById('questModalIcon').textContent='✨';
+  document.getElementById('questModalTitleText').textContent='สร้าง Quest ใหม่';
+  document.getElementById('editQuestId').value='';
+  document.getElementById('questTitleInput').value='';
+  document.getElementById('questDescInput').value='';
+  document.getElementById('questDateInput').value=dateStr;
+  updateQuestDateDisplay(dateStr);
+  renderIconPicker();
+  renderQuestTaskInputs([]);
+  document.getElementById('questModal').classList.add('show');
+}
+function openEditQuestModal(dateStr,qid){
+  const quests=getQuests(dateStr);const q=quests.find(x=>x.id===qid);if(!q)return;
+  editingQuestId=qid;selectedQuestIcon=q.icon||'🎯';
+  document.getElementById('questModalIcon').textContent='✏️';
+  document.getElementById('questModalTitleText').textContent='แก้ไข Quest';
+  document.getElementById('editQuestId').value=qid;
+  document.getElementById('questTitleInput').value=q.title;
+  document.getElementById('questDescInput').value=q.desc||'';
+  document.getElementById('questDateInput').value=dateStr;
+  updateQuestDateDisplay(dateStr);
+  renderIconPicker();
+  renderQuestTaskInputs(q.tasks||[]);
+  document.getElementById('questModal').classList.add('show');
+}
+function updateQuestDateDisplay(dateStr){
+  const d=parseDate(dateStr);
+  document.getElementById('questModalDateDisplay').textContent=formatDateTHFull(d);
+}
+document.getElementById('questDateInput').addEventListener('change',function(){updateQuestDateDisplay(this.value)});
+function closeQuestModal(){document.getElementById('questModal').classList.remove('show')}
+function renderQuestTaskInputs(tasks){const c=document.getElementById('questTaskInputs');c.innerHTML='';tasks.forEach(t=>addQuestTaskInput(t.t,t.xp))}
+function addQuestTaskInput(val='',xp=5){
+  const c=document.getElementById('questTaskInputs');
+  const row=document.createElement('div');row.className='task-input-row';
+  row.innerHTML=`<input class="form-input task-t-input" placeholder="task ย่อย..." value="${(val||'').replace(/"/g,'&quot;')}">
+    <input class="form-input task-xp-input task-input-xp" type="number" min="1" max="99" value="${xp}" placeholder="XP">
+    <button class="task-remove-btn" onclick="this.closest('.task-input-row').remove()">✕</button>`;
+  c.appendChild(row);
+}
+function saveQuest(){
+  const title=document.getElementById('questTitleInput').value.trim();
+  if(!title){showToast('⚠️ กรุณาใส่ชื่อ Quest');return;}
+  const dateStr=document.getElementById('questDateInput').value||dateKey(today);
+  const desc=document.getElementById('questDescInput').value.trim();
+  const taskRows=document.querySelectorAll('#questTaskInputs .task-input-row');
+  const tasks=[];taskRows.forEach(row=>{const t=row.querySelector('.task-t-input').value.trim();const xp=parseInt(row.querySelector('.task-xp-input').value)||5;if(t)tasks.push({t,xp})});
+  const quests=getQuests(dateStr);
+  if(editingQuestId){
+    const idx=quests.findIndex(q=>q.id===editingQuestId);
+    if(idx!==-1)quests[idx]={...quests[idx],icon:selectedQuestIcon,title,desc,tasks};
+  } else {
+    quests.push({id:'quest_'+Date.now(),icon:selectedQuestIcon,title,desc,tasks});
+  }
+  setQuests(dateStr,quests);closeQuestModal();
+  currentQuestDate=dateStr;renderQuestView();renderRoutine();renderMiniCal();
+  showToast(editingQuestId?'✏️ แก้ไข Quest แล้ว':'🎯 สร้าง Quest ใหม่แล้ว!');
+  updateXPUI();
+}
+function deleteQuest(dateStr,qid){
+  if(!confirm('ลบ Quest นี้?'))return;
+  const quests=getQuests(dateStr).filter(q=>q.id!==qid);
+  setQuests(dateStr,quests);renderQuestView();renderRoutine();showToast('🗑️ ลบ Quest แล้ว');updateXPUI();
+}
+
+// Quest nav
+function questNav(dir){
+  const d=parseDate(currentQuestDate);d.setDate(d.getDate()+dir);
+  currentQuestDate=dateKey(d);renderQuestView();
+}
+
+// ══════════════════════════════════════════
+// PLAN VIEW
+// ══════════════════════════════════════════
+function renderPlanView(){
+  const grid=document.getElementById('planDayGrid');grid.innerHTML='';
+  // show next 14 days
+  for(let i=0;i<14;i++){
+    const dt=new Date(today);dt.setDate(dt.getDate()+i);const k=dateKey(dt);
+    const quests=getQuests(k);const isToday=i===0;
+    const card=document.createElement('div');
+    card.className='plan-day-card'+(isToday?' today':'')+(quests.length>0?' has-quest':'');
+    card.onclick=()=>{planSelectedDate=k;renderPlanDetail(k);document.querySelectorAll('.plan-day-card').forEach(c=>c.style.borderColor='');card.style.borderColor='var(--accent3)'};
+    card.innerHTML=`<div class="plan-day-date">${['อา','จ','อ','พ','พฤ','ศ','ส'][dt.getDay()]}</div>
+      <div class="plan-day-num">${dt.getDate()}</div>
+      <div class="plan-day-quest-count">${quests.length>0?quests.length+' quest':'–'}</div>`;
+    grid.appendChild(card);
+  }
+  renderPlanDetail(planSelectedDate);
+}
+function renderPlanDetail(dateStr){
+  const detail=document.getElementById('planDayDetail');
+  const d=parseDate(dateStr);const quests=getQuests(dateStr);
+  const isToday=dateStr===dateKey(today);
+  detail.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+    <div style="font-size:15px;font-weight:700;color:var(--text)">${formatDateTHFull(d)}${isToday?' <span style="font-size:11px;color:var(--accent);font-family:Space Mono,monospace">TODAY</span>':''}</div>
+    <button class="quest-add-btn" onclick="openQuestModalForDate('${dateStr}')">+ Quest</button>
+  </div>`;
+  if(quests.length===0){
+    detail.insertAdjacentHTML('beforeend',`<div style="font-size:13px;color:var(--text3);padding:16px 0">ยังไม่มี Quest — กด "+ Quest" เพื่อวางแผน</div>`);
+  } else {
+    quests.forEach(q=>{
+      const done=isQuestDone(dateStr,q);
+      const div=document.createElement('div');
+      div.style.cssText='display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--surface2);border-radius:var(--radius-sm);margin-bottom:7px;border:1px solid '+(done?'rgba(94,255,192,.2)':'rgba(255,108,180,.15)');
+      div.innerHTML=`<div style="font-size:22px">${q.icon}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:14px;font-weight:600;color:var(--text)">${q.title}</div>
+          ${q.tasks.length>0?`<div style="font-size:11px;color:var(--text3);font-family:'Space Mono',monospace">${q.tasks.length} tasks</div>`:''}
+        </div>
+        <div style="font-size:12px;font-family:'Space Mono',monospace;color:${done?'var(--accent)':'var(--accent3)'}">${done?'✓ DONE':'+'+QUEST_XP+' XP'}</div>
+        <button class="quest-del-btn" onclick="deleteQuest('${dateStr}','${q.id}');renderPlanView()" style="padding:3px 8px">🗑️</button>`;
+      detail.appendChild(div);
+    });
+  }
+}
+
+// ══════════════════════════════════════════
+// ROUTINE VIEW
+// ══════════════════════════════════════════
+function renderRoutine(){
+  const d=parseDate(currentRoutineDate);const isToday=currentRoutineDate===dateKey(today);
+  const DAYS=['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
+  document.getElementById('routineDateTitle').textContent=isToday?'Routine วันนี้':formatDateTH(d);
+  document.getElementById('routineDateSub').textContent=`วัน${DAYS[d.getDay()]} · ${formatDateTH(d)}`;
+  const mood=getMood(currentRoutineDate);
+  document.querySelectorAll('.mood-btn').forEach(b=>b.classList.toggle('selected',b.dataset.mood===mood));
+  const checks=getChecks(currentRoutineDate);
+  const list=document.getElementById('routineList');list.innerHTML='';
+  getBlocks().forEach(block=>{
+    const bc=checks[block.id]||block.tasks.map(()=>false);
+    const done=bc.filter(Boolean).length;const total=block.tasks.length;const allDone=done===total&&total>0;
+    const el=document.createElement('div');el.className='routine-block'+(allDone?' completed':'');el.dataset.id=block.id;
+    el.innerHTML=`
+      <div class="block-header" onclick="toggleBlock('${block.id}')">
+        <div class="block-time">${block.time||'–'}</div>
+        <div class="block-info">
+          <div class="block-title">${block.title}</div>
+          <div class="block-meta">
+            <div class="block-progress-text">${done}/${total}</div>
+            <div class="block-xp-badge">+${blockXP(block)} XP</div>
+            <span class="block-completed-banner">✓ สำเร็จ</span>
+          </div>
+        </div>
+        <div class="block-right">
+          <div class="block-mini-progress">${block.tasks.map((_,i)=>`<div class="mini-dot${bc[i]?' done':''}"></div>`).join('')}</div>
+          <div class="block-chevron">▾</div>
+        </div>
+      </div>
+      <div class="block-body">
+        ${block.quote?`<div class="block-quote">${block.quote}</div>`:''}
+        <div class="task-list">${block.tasks.map((t,i)=>`
+          <div class="task-item${bc[i]?' checked':''}" onclick="toggleTask('${block.id}',${i},event)">
+            <div class="custom-check"><span class="check-mark">✓</span></div>
+            <div class="task-text">${t.t}</div>
+            <div class="task-diff">+${t.xp}xp</div>
+          </div>`).join('')}
+        </div>
+        <div class="block-actions">
+          <button class="block-edit-btn" onclick="event.stopPropagation();openEditBlockModal('${block.id}')">✏️ แก้ไข</button>
+          <button class="block-delete-btn" onclick="event.stopPropagation();deleteBlock('${block.id}')">🗑️ ลบ</button>
+        </div>
+      </div>`;
+    list.appendChild(el);
+  });
+  renderQuestMiniInRoutine();
+  updateProgress();renderWeeklyTrend();refreshInsight();
+}
+function toggleBlock(id){document.querySelector(`.routine-block[data-id="${id}"]`).classList.toggle('open')}
+function toggleTask(blockId,taskIdx,evt){
+  const checks=getChecks(currentRoutineDate);const block=getBlocks().find(b=>b.id===blockId);if(!block)return;
+  if(!checks[blockId])checks[blockId]=block.tasks.map(()=>false);
+  const was=checks[blockId][taskIdx];checks[blockId][taskIdx]=!was;setChecks(currentRoutineDate,checks);
+  const xpAmt=block.tasks[taskIdx].xp;
+  if(!was){
+    const rect=evt?.target?.getBoundingClientRect?.();popXP(xpAmt,rect?rect.left+rect.width/2:undefined,rect?rect.top:undefined);
+    const blockAllDone=checks[blockId].every(Boolean);
+    if(blockAllDone){launchConfetti(18);showToast(`🎉 +${blockXP(block)} XP! Block สำเร็จ!`)}else showToast(`✓ +${xpAmt} XP`);
+  }else showToast('↩ ยกเลิก');
+  renderRoutine();renderMiniCal();updateXPUI();
+}
+function updateProgress(){
+  const pct=calcProgress(currentRoutineDate);
+  document.getElementById('progressBar').style.width=pct+'%';
+  document.getElementById('identityScore').textContent=pct+'%';
+  const yday=new Date(today);yday.setDate(yday.getDate()-1);
+  const todayPct=calcProgress(dateKey(today));const ydayPct=calcProgress(dateKey(yday));
+  document.getElementById('trendIndicator').textContent=todayPct>ydayPct?'📈':todayPct<ydayPct&&ydayPct>0?'📉':'';
+}
+function selectMood(btn){
+  document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');setMood(currentRoutineDate,btn.dataset.mood);showToast('Mood: '+btn.dataset.mood);
+}
+
+// ══════════════════════════════════════════
+// BLOCK MODAL
+// ══════════════════════════════════════════
+function openAddBlockModal(){
+  editingBlockId=null;
+  document.getElementById('blockModalIcon').textContent='➕';document.getElementById('blockModalTitle').textContent='เพิ่ม Block ใหม่';
+  document.getElementById('blockTitleInput').value='';document.getElementById('blockTimeInput').value='';
+  document.getElementById('blockDifficulty').value='🔥🔥';document.getElementById('blockQuoteInput').value='';
+  document.getElementById('editBlockId').value='';renderTaskInputs([{t:'',xp:5}]);
+  document.getElementById('blockModal').classList.add('show');
+}
+function openEditBlockModal(blockId){
+  const block=getBlocks().find(b=>b.id===blockId);if(!block)return;
+  editingBlockId=blockId;
+  document.getElementById('blockModalIcon').textContent='✏️';document.getElementById('blockModalTitle').textContent='แก้ไข Block';
+  document.getElementById('blockTitleInput').value=block.title;document.getElementById('blockTimeInput').value=block.time;
+  document.getElementById('blockDifficulty').value=block.difficulty||'🔥🔥';document.getElementById('blockQuoteInput').value=block.quote||'';
+  document.getElementById('editBlockId').value=blockId;renderTaskInputs(block.tasks);
+  document.getElementById('blockModal').classList.add('show');
+}
+function closeBlockModal(){document.getElementById('blockModal').classList.remove('show')}
+function renderTaskInputs(tasks){const c=document.getElementById('taskInputs');c.innerHTML='';tasks.forEach(t=>addTaskInput(t.t,t.xp))}
+function addTaskInput(val='',xp=5){
+  const c=document.getElementById('taskInputs');const row=document.createElement('div');row.className='task-input-row';
+  row.innerHTML=`<input class="form-input task-t-input" placeholder="ชื่อ task..." value="${(val||'').replace(/"/g,'&quot;')}">
+    <input class="form-input task-xp-input task-input-xp" type="number" min="1" max="99" value="${xp}">
+    <button class="task-remove-btn" onclick="this.closest('.task-input-row').remove()">✕</button>`;
+  c.appendChild(row);
+}
+function saveBlock(){
+  const title=document.getElementById('blockTitleInput').value.trim();if(!title){showToast('⚠️ กรุณาใส่ชื่อ Block');return;}
+  const time=document.getElementById('blockTimeInput').value.trim();const difficulty=document.getElementById('blockDifficulty').value;
+  const quote=document.getElementById('blockQuoteInput').value.trim();
+  const taskRows=document.querySelectorAll('#taskInputs .task-input-row');const tasks=[];
+  taskRows.forEach(row=>{const t=row.querySelector('.task-t-input').value.trim();const xp=parseInt(row.querySelector('.task-xp-input').value)||5;if(t)tasks.push({t,xp})});
+  if(tasks.length===0){showToast('⚠️ กรุณาเพิ่มอย่างน้อย 1 Task');return;}
+  const blocks=getBlocks();
+  if(editingBlockId){const idx=blocks.findIndex(b=>b.id===editingBlockId);if(idx!==-1)blocks[idx]={...blocks[idx],title,time,difficulty,quote,tasks};}
+  else blocks.push({id:'block_'+Date.now(),title,time,difficulty,quote,tasks});
+  saveBlocks(blocks);closeBlockModal();renderRoutine();showToast(editingBlockId?'✏️ แก้ไขแล้ว':'✅ เพิ่ม Block แล้ว');updateXPUI();
+}
+function deleteBlock(blockId){if(!confirm('ลบ Block นี้?'))return;saveBlocks(getBlocks().filter(b=>b.id!==blockId));renderRoutine();showToast('🗑️ ลบ Block แล้ว')}
+
+// ══════════════════════════════════════════
+// CALENDAR
+// ══════════════════════════════════════════
+function renderFullCal(){
+  const MONTHS=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+  document.getElementById('calMonthTitle').textContent=`${MONTHS[calViewMonth]} ${calViewYear+543}`;
+  const grid=document.getElementById('fullCalGrid');grid.innerHTML='';
+  ['อา','จ','อ','พ','พฤ','ศ','ส'].forEach(d=>{const el=document.createElement('div');el.className='cal-day-header';el.textContent=d;grid.appendChild(el)});
+  const first=new Date(calViewYear,calViewMonth,1);const startDay=first.getDay();
+  const daysInMonth=new Date(calViewYear,calViewMonth+1,0).getDate();const todayKey=dateKey(today);
+  for(let i=0;i<startDay;i++){const el=document.createElement('div');el.className='cal-day empty';grid.appendChild(el)}
+  for(let d=1;d<=daysInMonth;d++){
+    const dt=new Date(calViewYear,calViewMonth,d);const key=dateKey(dt);const pct=calcProgress(key);
+    const isToday=key===todayKey;const hasQuest=getQuests(key).length>0;
+    const el=document.createElement('div');el.className='cal-day'+(isToday?' today':'');
+    el.onclick=()=>switchToRoutineDate(key);
+    const barClass=pct>=80?'high':pct>=50?'mid':'low';
+    el.innerHTML=`${hasQuest?'<div class="cal-day-quest-dot"></div>':''}<div class="cal-day-num">${d}</div>
+      <div class="cal-day-bar"><div class="cal-day-bar-fill ${barClass}" style="width:${pct}%"></div></div>
+      <div class="cal-day-pct">${pct>0?pct+'%':''}</div>`;
+    grid.appendChild(el);
+  }
+}
+function calNav(dir){calViewMonth+=dir;if(calViewMonth>11){calViewMonth=0;calViewYear++}if(calViewMonth<0){calViewMonth=11;calViewYear--}renderFullCal()}
+
+// ══════════════════════════════════════════
+// MINI CALENDAR
+// ══════════════════════════════════════════
+function renderMiniCal(){
+  const MONTHS=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  document.getElementById('miniCalTitle').textContent=`${MONTHS[miniCalMonth]} ${miniCalYear+543}`;
+  const grid=document.getElementById('miniCalGrid');grid.innerHTML='';
+  ['อ','จ','อ','พ','พ','ศ','ส'].forEach(d=>{const el=document.createElement('div');el.className='mini-cal-day-label';el.textContent=d;grid.appendChild(el)});
+  const first=new Date(miniCalYear,miniCalMonth,1);const startDay=first.getDay();
+  const daysInMonth=new Date(miniCalYear,miniCalMonth+1,0).getDate();const todayKey=dateKey(today);
+  for(let i=0;i<startDay;i++){const el=document.createElement('div');el.className='mini-cal-day empty';el.textContent=' ';grid.appendChild(el)}
+  for(let d=1;d<=daysInMonth;d++){
+    const dt=new Date(miniCalYear,miniCalMonth,d);const key=dateKey(dt);
+    const pct=calcProgress(key);const isToday=key===todayKey;const isSel=key===currentRoutineDate;
+    const hasQuest=getQuests(key).length>0;
+    const el=document.createElement('div');
+    el.className='mini-cal-day'+(isToday?' today':'')+(isSel&&!isToday?' selected':'')+(pct>0?' has-data':hasQuest?' has-quest':'');
+    el.textContent=d;el.onclick=()=>switchToRoutineDate(key);grid.appendChild(el);
+  }
+}
+function miniCalNav(dir){miniCalMonth+=dir;if(miniCalMonth>11){miniCalMonth=0;miniCalYear++}if(miniCalMonth<0){miniCalMonth=11;miniCalYear--}renderMiniCal()}
+function switchToRoutineDate(key){
+  currentRoutineDate=key;switchView('routine',document.getElementById('nav-routine'));
+  updateMobileNav('routine');renderRoutine();renderMiniCal();if(window.innerWidth<=768)closeSidebar();
+}
+
+// ══════════════════════════════════════════
+// STATS
+// ══════════════════════════════════════════
+function renderStats(){
+  const s=aggregateStats();
+  animateCount('statStreak',s.streak);animateCount('statLevel',s.level);animateCount('statXP',s.totalXP);
+  document.getElementById('statAvg').textContent=s.avgPct+'%';
+  animateCount('statPerfect',s.perfectDays);animateCount('statQuests',s.questsDone);
+  const insights=buildInsights();
+  const insEl=document.getElementById('advancedInsights');insEl.innerHTML='';
+  insights.slice(0,5).forEach(ins=>{
+    const cls=ins.includes('⚠️')||ins.includes('📉')?'warn':ins.includes('🌟')||ins.includes('💯')?'good':'';
+    const row=document.createElement('div');row.className='insight-row '+cls;
+    row.innerHTML=`<div class="insight-row-icon">${ins.charAt(0)}</div><div class="insight-row-text">${ins.slice(2)}</div>`;
+    insEl.appendChild(row);
+  });
+  const failEl=document.getElementById('failureList');failEl.innerHTML='';
+  const allDateKeys=S.keys().filter(k=>k.startsWith('checks_')).map(k=>k.replace('checks_',''));
+  if(allDateKeys.length>0){
+    const blockRates=getBlocks().map(b=>{
+      let done=0,total=0;
+      allDateKeys.forEach(k=>{const c=getChecks(k);const bc=c[b.id]||[];total+=b.tasks.length;bc.forEach(v=>{if(v)done++})});
+      const rate=total>0?Math.round(done/total*100):0;return{title:b.title,rate,failRate:100-rate};
+    }).sort((a,b)=>b.failRate-a.failRate).slice(0,5);
+    blockRates.forEach(({title,rate,failRate})=>{
+      const el=document.createElement('div');el.className='failure-item';
+      el.innerHTML=`<div class="failure-name">${title}</div>
+        <div class="failure-bar-wrap"><div class="failure-bar-fill" style="width:${failRate}%"></div></div>
+        <div class="failure-pct">${rate}%</div>`;
+      failEl.appendChild(el);
+    });
+  } else failEl.innerHTML='<div style="font-size:13px;color:var(--text3);padding:10px">ยังไม่มีข้อมูล</div>';
+  const hm=document.getElementById('heatmapGrid');hm.innerHTML='';
+  for(let i=89;i>=0;i--){
+    const dt=new Date(today);dt.setDate(dt.getDate()-i);const k=dateKey(dt);const pct=calcProgress(k);
+    const level=pct===0?0:pct<25?1:pct<50?2:pct<75?3:4;
+    const el=document.createElement('div');el.className='hm-cell';el.dataset.level=level;el.title=`${k}: ${pct}%`;hm.appendChild(el);
+  }
+}
+function animateCount(id,target){
+  const el=document.getElementById(id);let start=0;const dur=700;const t0=performance.now();
+  function update(now){const p=Math.min((now-t0)/dur,1);const e=1-Math.pow(1-p,3);el.textContent=Math.round(start+(target-start)*e);if(p<1)requestAnimationFrame(update)}
+  requestAnimationFrame(update);
+}
+
+// ══════════════════════════════════════════
+// JOURNAL
+// ══════════════════════════════════════════
+function renderJournal(){
+  const d=parseDate(currentJournalDate);
+  document.getElementById('journalDateDisplay').textContent=formatDateTH(d);
+  const j=getJournal(currentJournalDate);
+  document.getElementById('journalGoals').value=j.goals||'';
+  document.getElementById('journalGratitude').value=j.gratitude||'';
+  document.getElementById('journalLearned').value=j.learned||'';
+  document.getElementById('journalReflection').value=j.reflection||'';
+  document.getElementById('journalSavedBadge').classList.remove('show');
+  updateCharCounts();
+}
+function updateCharCounts(){['Goals','Gratitude','Learned','Reflection'].forEach(f=>{const ta=document.getElementById('journal'+f);const cc=document.getElementById('cc'+f);if(ta&&cc)cc.textContent=ta.value.length+' ตัว'})}
+setTimeout(()=>['journalGoals','journalGratitude','journalLearned','journalReflection'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',updateCharCounts)}),200);
+function saveJournal(){
+  setJournal(currentJournalDate,{goals:document.getElementById('journalGoals').value,gratitude:document.getElementById('journalGratitude').value,learned:document.getElementById('journalLearned').value,reflection:document.getElementById('journalReflection').value});
+  const badge=document.getElementById('journalSavedBadge');badge.classList.add('show');setTimeout(()=>badge.classList.remove('show'),2500);
+  showToast('💾 บันทึกสำเร็จ');updateXPUI();
+}
+function journalNav(dir){const d=parseDate(currentJournalDate);d.setDate(d.getDate()+dir);currentJournalDate=dateKey(d);renderJournal()}
+
+// ══════════════════════════════════════════
+// SIDEBAR / MOBILE
+// ══════════════════════════════════════════
+function openSidebar(){document.getElementById('sidebar').classList.add('open');const ov=document.getElementById('sidebarOverlay');ov.style.display='block';requestAnimationFrame(()=>ov.classList.add('show'))}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');const ov=document.getElementById('sidebarOverlay');ov.classList.remove('show');setTimeout(()=>ov.style.display='none',300)}
+function updateMobileNav(v){document.querySelectorAll('.mobile-nav-item').forEach(el=>el.classList.remove('active'));const el=document.getElementById('mnav-'+v);if(el)el.classList.add('active')}
+
+// ══════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════
+const VIEW_META={routine:['⚡','Routine วันนี้'],quest:['🎯','Daily Quests'],plan:['📋','วางแผนล่วงหน้า'],calendar:['📅','ปฏิทิน'],stats:['📊','สถิติ'],badges:['🏆','Badges'],journal:['📝','บันทึก']};
+function switchView(viewId,clickedEl){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('view-'+viewId).classList.add('active');
+  const navEl=document.getElementById('nav-'+viewId);if(navEl)navEl.classList.add('active');
+  const[icon,title]=VIEW_META[viewId]||['⚡',''];
+  document.getElementById('topbarIcon').textContent=icon;document.getElementById('topbarTitle').textContent=title;
+  if(viewId==='routine')renderRoutine();
+  if(viewId==='quest')renderQuestView();
+  if(viewId==='plan')renderPlanView();
+  if(viewId==='calendar')renderFullCal();
+  if(viewId==='stats')renderStats();
+  if(viewId==='badges')renderBadges();
+  if(viewId==='journal')renderJournal();
+  if(window.innerWidth<=768)closeSidebar();
+}
+
+// ══════════════════════════════════════════
+// FX
+// ══════════════════════════════════════════
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),2400)}
+function launchConfetti(count=20){
+  const colors=['#5effc0','#7c6cff','#ff6cb4','#ffc85e','#ff5e7a'];
+  for(let i=0;i<count;i++){
+    const el=document.createElement('div');el.className='confetti-piece';
+    el.style.left=Math.random()*100+'vw';el.style.background=colors[Math.floor(Math.random()*colors.length)];
+    el.style.animationDuration=(1.2+Math.random()*1.2)+'s';el.style.animationDelay=Math.random()*0.6+'s';
+    el.style.width=el.style.height=(6+Math.random()*8)+'px';
+    document.body.appendChild(el);setTimeout(()=>el.remove(),2800);
+  }
+}
+function triggerLevelUp(oldLv,newLv){
+  const ld=getLevelData(newLv);
+  document.getElementById('levelupIcon').textContent=ld.icon;document.getElementById('levelupTitle').textContent=`LEVEL ${newLv}!`;
+  document.getElementById('levelupSub').textContent='คุณขึ้นระดับใหม่แล้ว!';document.getElementById('levelupName').textContent=ld.name.toUpperCase();
+  document.getElementById('levelupOverlay').classList.add('show');launchConfetti(50);
+}
+function closeLevelUp(){document.getElementById('levelupOverlay').classList.remove('show')}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+function init(){
+  loadTheme();
+  document.getElementById('topbarDate').textContent=formatDateTH(today);
+  const s=aggregateStats();
+  prevLevel=s.level;
+  prevEarnedBadgeIds=new Set(ALL_BADGES.filter(b=>b.check(s)).map(b=>b.id));
+  updateProfileUI();renderRoutine();renderMiniCal();updateXPUI();
+}
+
+// ── BOOT ──
+renderSavedUsers();
+if(checkExistingSession()){
+  document.getElementById('authScreen').classList.add('hidden');
+  init();
+}
+// Enter key on login
+document.getElementById('loginPassword').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+document.getElementById('loginUsername').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('loginPassword').focus()});
+document.getElementById('regPassword2').addEventListener('keydown',e=>{if(e.key==='Enter')doRegister()});
+</script>
+</body>
+</html>
