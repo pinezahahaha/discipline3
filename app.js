@@ -10,12 +10,14 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 
-// 🔴 ใส่ config ของคุณตรงนี้
 const firebaseConfig = {
   apiKey: "AIzaSyBAvc6p3LxQlFjo-brEFpQa_kagcphdY44",
   authDomain: "discipline-os-9502b.firebaseapp.com",
   projectId: "discipline-os-9502b",
-  appId: "1:561241359867:web:843d17cebae639b4b9375e"
+  storageBucket: "discipline-os-9502b.firebasestorage.app",
+  messagingSenderId: "561241359867",
+  appId: "1:561241359867:web:843d17cebae639b4b9375e",
+  measurementId: "G-4FVRR5V7R2"
 };
 
 // init
