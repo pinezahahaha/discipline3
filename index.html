@@ -494,7 +494,42 @@ body.theme-mono{--bg:#050505;--bg2:#090909;--surface:#0e0e0e;--surface2:#161616;
 <body>
 
 <!-- ── AUTH SCREEN ── -->
-<div id="authScreen">
+<div id="authScreen" style="position:fixed;inset:0;z-index:9000;
+     background:var(--bg);display:flex;align-items:center;
+     justify-content:center;padding:20px">
+
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="auth-logo-title">⚡ Discipline OS</div>
+      <div class="auth-logo-sub">1% Better Every Day</div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tabLogin"    onclick="switchAuthTab('login')">เข้าสู่ระบบ</div>
+      <div class="auth-tab"        id="tabRegister" onclick="switchAuthTab('register')">สมัครสมาชิก</div>
+    </div>
+
+    <!-- Login Form -->
+    <div id="loginForm" class="auth-form">
+      <div class="auth-error" id="loginError"></div>
+      <input class="auth-input" id="loginEmail"    type="email"    placeholder="Email" autocomplete="email">
+      <input class="auth-input" id="loginPassword" type="password" placeholder="รหัสผ่าน" autocomplete="current-password">
+      <button class="auth-btn" onclick="doLogin()">🔑 เข้าสู่ระบบ</button>
+    </div>
+
+    <!-- Register Form -->
+    <div id="registerForm" class="auth-form" style="display:none">
+      <div class="auth-error" id="registerError"></div>
+      <input class="auth-input" id="regEmail"    type="email"    placeholder="Email" autocomplete="email">
+      <input class="auth-input" id="regPassword" type="password" placeholder="รหัสผ่าน (อย่างน้อย 6 ตัว)" autocomplete="new-password">
+      <button class="auth-btn" onclick="doRegister()">✨ สมัครสมาชิก</button>
+    </div>
+
+    <div class="auth-hint">ข้อมูลเก็บบน Firebase · ไม่ส่งให้บุคคลที่สาม</div>
+  </div>
+</div>
+  <div id="authScreen">
   <div class="auth-card">
     <div class="auth-logo">
       <div class="auth-logo-title">⚡ Discipline OS</div>
